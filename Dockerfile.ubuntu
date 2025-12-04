@@ -30,18 +30,16 @@ RUN apt-get update && \
     python${PYTHON_VERSION} python${PYTHON_VERSION}-dev python3-pip \
     libssl-dev libffi-dev \
     ca-certificates tar gzip \
+    # Install ROCm (Stable 6.2)
+    && wget https://repo.radeon.com/amdgpu-install/6.2.4/ubuntu/noble/amdgpu-install_6.2.60204-1_all.deb \
+    && apt-get install -y ./amdgpu-install_6.2.60204-1_all.deb \
+    && rm amdgpu-install_6.2.60204-1_all.deb \
+    && amdgpu-install -y --usecase=rocm --no-dkms \
     && rm -rf /var/lib/apt/lists/*
 
 # Set python3 to point to our version
 RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python${PYTHON_VERSION} 1 && \
     update-alternatives --install /usr/bin/python python /usr/bin/python${PYTHON_VERSION} 1
-
-# ====== Install ROCm 6.3 (Using amdgpu-install) ======
-RUN wget https://repo.radeon.com/amdgpu-install/6.3/ubuntu/noble/amdgpu-install_6.3.60300-1_all.deb && \
-    apt-get install -y ./amdgpu-install_6.3.60300-1_all.deb && \
-    rm amdgpu-install_6.3.60300-1_all.deb && \
-    amdgpu-install -y --usecase=rocm --no-dkms && \
-    rm -rf /var/lib/apt/lists/*
 
 ENV ROCM_PATH=/opt/rocm
 ENV LD_LIBRARY_PATH=$ROCM_PATH/lib:$LD_LIBRARY_PATH
@@ -60,12 +58,14 @@ ENV VIRTUAL_ENV=/opt/vllm-build/.venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # ====== Install PyTorch 2.5.0 (Stable) ======
-# Note: Using latest from ROCm 6.3 index (version constraint doesn't work with index-url)
+# Note: Using latest from ROCm 6.2 index (version constraint doesn't work with index-url)
 RUN uv pip install \
-    --index-url https://download.pytorch.org/whl/rocm6.3 \
+    --index-url https://download.pytorch.org/whl/rocm6.2 \
     torch \
     torchvision \
-    torchaudio
+    torchaudio \
+    # Pin CMake to avoid incompatibility with ROCm 6.2 config files
+    && uv pip install cmake==3.29.0
 
 # Verify torch installation
 RUN python -c "import torch; print(f'PyTorch: {torch.__version__}, ROCm: {torch.version.hip}')"

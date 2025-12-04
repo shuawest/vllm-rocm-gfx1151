@@ -288,6 +288,24 @@ sed -i 's/return "vllm.platforms.rocm.RocmPlatform" if is_rocm else None/import 
 
 ---
 
+### Issue #21: PyTorch Version Mismatch / Segfaults (ROCm 6.3)
+**Date**: 2025-12-03  
+**Error**: `Memory access fault` / `invalid device function` with PyTorch `2.9.1+rocm6.3`.  
+**Root Cause**: The PyTorch wheel for ROCm 6.3 appears to be unstable or mislabeled (2.9.1 doesn't exist), causing segfaults on Strix Point.  
+**Fix**: Downgraded to **ROCm 6.2** and **PyTorch 2.5.1** (Stable).
+**Files Modified**: `versions.env`, `Dockerfile.ubuntu`
+
+---
+
+### Issue #22: CMake Version Incompatibility (ROCm 6.2)
+**Date**: 2025-12-03  
+**Error**: `Compatibility with CMake < 3.5 has been removed from CMake` in `hiprtc-config.cmake`.  
+**Root Cause**: `uv` installed CMake 4.x (bleeding edge), which dropped support for older CMake policies used by ROCm 6.2 config files.  
+**Fix**: Pinned `cmake==3.29.0` in `Dockerfile.ubuntu`.
+**Files Modified**: `Dockerfile.ubuntu`
+
+---
+
 ## Change Summary
 
 ### Dockerfile

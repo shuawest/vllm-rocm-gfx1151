@@ -24,7 +24,7 @@ podman run -d \
     -e VLLM_USE_V1=0 \
     $IMAGE_NAME \
     python3 -m vllm.entrypoints.openai.api_server \
-    --model $MODEL \
+    --model Qwen/Qwen2.5-0.5B-Instruct \
     --dtype float16 \
     --max-model-len 2048 \
     --gpu-memory-utilization 0.8
