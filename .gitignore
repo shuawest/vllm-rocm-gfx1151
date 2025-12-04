@@ -1,0 +1,25 @@
+# Logs and Build Artifacts
+logs/
+*.log
+*.out
+vllm_inference_full.log
+
+# Temporary Debug Directories (Cloned Repos)
+vllm_check/
+vllm_inspect/
+
+# Debug Scripts
+debug_*.sh
+debug_*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# System
+.DS_Store
+.idea/
+.vscode/

@@ -1,0 +1,110 @@
+# syntax=docker/dockerfile:1.4
+FROM fedora:43
+
+# ====== Args you can pin for "known-good" stack ======
+ARG ROCM_INDEX_URL=https://rocm.nightlies.amd.com/v2/gfx1151/
+# After you find a good combo, pin these:
+ARG TORCH_VERSION=""      # e.g. 2.5.1+rocm7.10.0a20251015  (fill in later)
+ARG TORCHAUDIO_VERSION=""
+ARG TORCHVISION_VERSION=""
+
+# ====== Base toolchain ======
+RUN dnf install -y \
+    wget curl git \
+    gcc gcc-c++ make cmake \
+    python3-pip python3-devel \
+    openssl-devel libffi-devel \
+    ca-certificates tar gzip libatomic \
+    && dnf clean all
+
+# uv for modern Python env management
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+WORKDIR /opt/vllm-build
+RUN uv venv --python 3.13
+ENV VIRTUAL_ENV=/opt/vllm-build/.venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# ====== Install ROCm Python packages (TheRock nightlies) ======
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install \
+      --index-url ${ROCM_INDEX_URL} \
+      "rocm[libraries,devel]" && \
+    if [ -z "$TORCH_VERSION" ]; then \
+      uv pip install \
+        --index-url ${ROCM_INDEX_URL} \
+        --pre torch torchaudio torchvision ; \
+    else \
+      uv pip install \
+        --index-url ${ROCM_INDEX_URL} \
+        --pre \
+        "torch==${TORCH_VERSION}" \
+        "torchaudio==${TORCHAUDIO_VERSION}" \
+        "torchvision==${TORCHVISION_VERSION}" ; \
+    fi
+
+# ====== Download matching ROCm tarball ======
+RUN --mount=type=cache,target=/var/cache/rocm-downloads \
+    ROCM_VERSION=$(uv pip show torch | grep Version | awk -F'+rocm' '{print $2}') && \
+    echo "Detected ROCm Version: $ROCM_VERSION" && \
+    TARBALL="therock-dist-linux-gfx1151-${ROCM_VERSION}.tar.gz" && \
+    if [ -f "/var/cache/rocm-downloads/${TARBALL}" ]; then \
+        ln -s "/var/cache/rocm-downloads/${TARBALL}" . ; \
+    else \
+        curl -#LO "https://therock-nightly-tarball.s3.amazonaws.com/${TARBALL}" && \
+        cp "${TARBALL}" "/var/cache/rocm-downloads/${TARBALL}" ; \
+    fi && \
+    mkdir -p rocm-${ROCM_VERSION} && \
+    tar xzf ${TARBALL} -C rocm-${ROCM_VERSION} && \
+    rm ${TARBALL} && \
+    echo "${ROCM_VERSION}" > /opt/rocm_version.txt && \
+    ln -s /opt/vllm-build/rocm-${ROCM_VERSION} /opt/rocm-current
+
+ENV ROCM_PATH=/opt/rocm-current
+ENV LD_LIBRARY_PATH=$ROCM_PATH/lib
+ENV DEVICE_LIB_PATH=$ROCM_PATH/llvm/amdgcn/bitcode
+ENV HIP_DEVICE_LIB_PATH=$ROCM_PATH/llvm/amdgcn/bitcode
+ENV PYTORCH_ROCM_ARCH="gfx1151"
+ENV CUDA_HOME=/opt/rocm-current
+ENV VLLM_TORCH_COMPILE_LEVEL=0
+
+# Sanity check ROCm userspace
+RUN $ROCM_PATH/bin/amd-smi || true
+
+# ====== Build vLLM from source ======
+RUN --mount=type=cache,target=/root/.cache/git \
+    git clone https://github.com/vllm-project/vllm.git
+
+WORKDIR /opt/vllm-build/vllm
+
+# Workaround from Framework thread: import amdsmi early
+RUN sed -i '/from \.version import __version__/a import amdsmi' vllm/__init__.py
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip uninstall -y amdsmi || true && \
+    uv pip install "numpy<2" && \
+    python use_existing_torch.py && \
+    uv pip install --upgrade numba scipy \
+        "huggingface-hub[cli,hf_transfer]" setuptools_scm && \
+    uv pip install -r requirements/rocm.txt && \
+    python setup.py develop && \
+    uv pip install ${ROCM_PATH}/share/amd_smi
+
+# ====== Optional: FlashAttention for ROCm ======
+RUN --mount=type=cache,target=/root/.cache/git \
+    cd /opt/vllm-build && \
+    git clone https://github.com/ROCm/flash-attention.git && \
+    cd flash-attention && \
+    git checkout main_perf && \
+    sed -i '/from wheel.bdist_wheel import bdist_wheel/a import amdsmi' setup.py && \
+    FLASH_ATTENTION_TRITON_AMD_ENABLE="TRUE" python setup.py develop
+
+# ====== Runtime env and entrypoint ======
+ENV FLASH_ATTENTION_TRITON_AMD_ENABLE="TRUE"
+ENV HSA_OVERRIDE_GFX_VERSION=11.5.1
+
+COPY scripts/smoke_test.py /opt/vllm-build/scripts/smoke_test.py
+
+EXPOSE 8000
+
+CMD ["bash", "-lc", "python -m vllm.entrypoints.openai.api_server --host 0.0.0.0 --port 8000 --model cpatonn/Qwen3-VL-4B-Instruct-AWQ-4bit --dtype float16 --max-model-len 32768 --tensor-parallel-size 1"]

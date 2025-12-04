@@ -1,0 +1,43 @@
+---
+- name: Setup ROCm Host (aimax)
+  hosts: all
+  become: true
+  vars:
+    rocm_packages:
+      - podman
+      - git
+      - python3-pip
+      - pciutils
+    user_groups:
+      - video
+      - render
+
+  tasks:
+    - name: Install required packages
+      ansible.builtin.dnf:
+        name: "{{ rocm_packages }}"
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Ensure user is in video/render groups
+      ansible.builtin.user:
+        name: "{{ ansible_user_id }}"
+        groups: "{{ item }}"
+        append: yes
+      loop: "{{ user_groups }}"
+
+    - name: Check for ROCm devices (kfd)
+      ansible.builtin.stat:
+        path: /dev/kfd
+      register: kfd_device
+
+    - name: Warn if ROCm device missing
+      ansible.builtin.debug:
+        msg: "WARNING: /dev/kfd not found. ROCm drivers might not be loaded."
+      when: not kfd_device.stat.exists
+
+    - name: Enable Podman socket (optional, for tools that need it)
+      ansible.builtin.systemd:
+        name: podman.socket
+        enabled: yes
+        state: started

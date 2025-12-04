@@ -1,0 +1,120 @@
+# syntax=docker/dockerfile:1.4
+FROM ubuntu:24.04
+
+# ====== Version Configuration (from versions.env) ======
+ARG ROCM_VERSION="6.3.4"
+ARG TORCH_VERSION="2.5.0+rocm6.3"
+ARG PYTHON_VERSION="3.12"
+ARG VLLM_REPO="https://github.com/vllm-project/vllm.git"
+ARG VLLM_VERSION="v0.10.2"  # Latest stable release
+ARG FLASH_ATTENTION_REPO="https://github.com/ROCm/flash-attention.git"
+ARG FLASH_ATTENTION_COMMIT="main_perf"
+
+LABEL maintainer="Antigravity Build System"
+LABEL description="vLLM + PyTorch on ROCm gfx1151 (Strix Point/Halo) - Stable Versions"
+LABEL vllm.version="${VLLM_VERSION}"
+LABEL torch.version="${TORCH_VERSION}"
+LABEL rocm.version="${ROCM_VERSION}"
+
+# ====== Base System Setup ======
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    git \
+    wget \
+    curl \
+    vim \
+    rsync \
+    dialog \
+    software-properties-common \
+    ninja-build \
+    python${PYTHON_VERSION} python${PYTHON_VERSION}-dev python3-pip \
+    libssl-dev libffi-dev \
+    ca-certificates tar gzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set python3 to point to our version
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python${PYTHON_VERSION} 1 && \
+    update-alternatives --install /usr/bin/python python /usr/bin/python${PYTHON_VERSION} 1
+
+# ====== Install ROCm 6.3 (Using amdgpu-install) ======
+RUN wget https://repo.radeon.com/amdgpu-install/6.3/ubuntu/noble/amdgpu-install_6.3.60300-1_all.deb && \
+    apt-get install -y ./amdgpu-install_6.3.60300-1_all.deb && \
+    rm amdgpu-install_6.3.60300-1_all.deb && \
+    amdgpu-install -y --usecase=rocm --no-dkms && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV ROCM_PATH=/opt/rocm
+ENV LD_LIBRARY_PATH=$ROCM_PATH/lib:$LD_LIBRARY_PATH
+ENV PATH=$ROCM_PATH/bin:$PATH
+ENV DEVICE_LIB_PATH=$ROCM_PATH/amdgcn/bitcode
+ENV HIP_DEVICE_LIB_PATH=$ROCM_PATH/amdgcn/bitcode
+ENV PYTORCH_ROCM_ARCH="gfx1151"
+ENV HSA_OVERRIDE_GFX_VERSION=11.5.1
+
+# ====== Install uv for Python package management ======
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+WORKDIR /opt/vllm-build
+RUN uv venv --python ${PYTHON_VERSION}
+ENV VIRTUAL_ENV=/opt/vllm-build/.venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# ====== Install PyTorch 2.5.0 (Stable) ======
+# Note: Using latest from ROCm 6.3 index (version constraint doesn't work with index-url)
+RUN uv pip install \
+    --index-url https://download.pytorch.org/whl/rocm6.3 \
+    torch \
+    torchvision \
+    torchaudio
+
+# Verify torch installation
+RUN python -c "import torch; print(f'PyTorch: {torch.__version__}, ROCm: {torch.version.hip}')"
+
+# ====== Clone vLLM v0.10.3 (Release Tag) ======
+RUN git clone "${VLLM_REPO}" vllm && \
+    cd vllm && \
+    git fetch --all --tags && \
+    git checkout "${VLLM_VERSION}" && \
+    # Patch: Add gfx1151 to supported architectures (robust patch)
+    sed -i 's/set(HIP_SUPPORTED_ARCHS "/set(HIP_SUPPORTED_ARCHS "gfx1151;/g' CMakeLists.txt && \
+    # Patch: Fallback to torch.version.hip if amdsmi fails
+    sed -i 's/return "vllm.platforms.rocm.RocmPlatform" if is_rocm else None/import torch; return "vllm.platforms.rocm.RocmPlatform" if (is_rocm or torch.version.hip) else None/g' vllm/platforms/__init__.py
+
+WORKDIR /opt/vllm-build/vllm
+
+# ====== Build vLLM ======
+ENV VLLM_TARGET_DEVICE="rocm"
+ENV MAX_JOBS="4"
+ENV FLASH_ATTENTION_TRITON_AMD_ENABLE="TRUE"
+
+# Install vLLM dependencies
+RUN uv pip install -r requirements/rocm.txt && \
+    uv pip install \
+    setuptools setuptools_scm wheel ninja \
+    cmake scikit-build-core
+
+# Build and install vLLM
+RUN CMAKE_PREFIX_PATH="${VIRTUAL_ENV}/lib/python${PYTHON_VERSION}/site-packages/torch/share/cmake/Torch" \
+    TORCH_CUDA_ARCH_LIST="gfx1151" \
+    uv pip install --no-build-isolation -e .
+
+# ====== Optional: Build Flash Attention ======
+RUN cd /opt/vllm-build && \
+    git clone "${FLASH_ATTENTION_REPO}" flash-attention && \
+    cd flash-attention && \
+    git checkout "${FLASH_ATTENTION_COMMIT}" && \
+    MAX_JOBS=4 FLASH_ATTENTION_TRITON_AMD_ENABLE=TRUE \
+    python setup.py install
+
+# ====== Verification & Runtime Setup ======
+RUN python -c "import vllm; print(f'vLLM: {vllm.__version__}')" && \
+    python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}, Devices: {torch.cuda.device_count()}')"
+
+WORKDIR /workspace
+EXPOSE 8000
+
+CMD ["python", "-m", "vllm.entrypoints.openai.api_server", \
+    "--host", "0.0.0.0", "--port", "8000", \
+    "--model", "cpatonn/Qwen3-VL-4B-Instruct-AWQ-4bit", \
+    "--dtype", "float16", \
+    "--max-model-len", "32768"]
