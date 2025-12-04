@@ -1,0 +1,43 @@
+FROM rocm/vllm-dev:rocm7.1.1_navi_ubuntu24.04_py3.12_pytorch_2.8_vllm_0.10.2rc1
+
+# Uninstall pre-installed vLLM to avoid conflicts
+RUN pip uninstall -y vllm
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y git
+
+# Clone vLLM
+WORKDIR /app
+RUN rm -rf vllm && git clone https://github.com/vllm-project/vllm.git
+WORKDIR /app/vllm
+RUN git checkout v0.10.2
+
+# Apply Patches
+
+# 1. Add gfx1151 to CMakeLists.txt
+# Using a flexible regex to find the HIP_SUPPORTED_ARCHS line and append gfx1151
+RUN sed -i 's/set(HIP_SUPPORTED_ARCHS ".*")/set(HIP_SUPPORTED_ARCHS "gfx906;gfx908;gfx90a;gfx942;gfx950;gfx1030;gfx1100;gfx1101;gfx1200;gfx1201;gfx1151")/' CMakeLists.txt
+
+# 2. Fix list[int] in fp8_utils.py (Required for Python 3.12)
+RUN sed -i 's/from typing import Any, Dict, Optional, Tuple, Union/from typing import Any, Dict, List, Optional, Tuple, Union/' vllm/model_executor/layers/quantization/utils/fp8_utils.py && \
+    sed -i 's/def normalize_e4m3_scale_per_tensor(scale: list\[int\])/def normalize_e4m3_scale_per_tensor(scale: List[int])/' vllm/model_executor/layers/quantization/utils/fp8_utils.py
+
+# 3. Relax PyTorch version constraint
+# The base image has PyTorch 2.8, but vLLM might ask for <2.6.
+# We remove the torch requirement line to let it use the installed one.
+RUN ls -R requirements
+RUN cat use_existing_torch.py
+# RUN sed -i '/torch/d' requirements-rocm.txt
+
+# Build Configuration
+# FORCE gfx1100 to match PyTorch's capabilities
+ENV HIP_SUPPORTED_ARCHS="gfx1100"
+ENV PYTORCH_ROCM_ARCH="gfx1100"
+ENV VLLM_TARGET_DEVICE="rocm"
+ENV MAX_JOBS="4"
+
+# Build and Install
+# --no-build-isolation to use the pre-installed PyTorch
+RUN pip install --no-build-isolation -v .
+
+CMD ["/bin/bash"]

@@ -27,7 +27,11 @@ RUN apt-get update && \
     dialog \
     software-properties-common \
     ninja-build \
-    python${PYTHON_VERSION} python${PYTHON_VERSION}-dev python3-pip \
+    # Add deadsnakes PPA for Python 3.10
+    && add-apt-repository ppa:deadsnakes/ppa -y \
+    && apt-get update \
+    && apt-get install -y \
+    python${PYTHON_VERSION} python${PYTHON_VERSION}-dev python3-pip python${PYTHON_VERSION}-venv \
     libssl-dev libffi-dev \
     ca-certificates tar gzip \
     # Install ROCm (Stable 6.2)
@@ -59,13 +63,15 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # ====== Install PyTorch 2.5.0 (Stable) ======
 # Note: Using latest from ROCm 6.2 index (version constraint doesn't work with index-url)
-RUN uv pip install \
-    --index-url https://download.pytorch.org/whl/rocm6.2 \
-    torch \
-    torchvision \
-    torchaudio \
+# Install PyTorch from TheRock Nightlies (gfx1151 support)
+# We need to trust the repo or use --break-system-packages if needed (but we are in venv)
+RUN uv pip install --index-url https://rocm.nightlies.amd.com/v2/gfx1151/torch_nightly/ \
+    --extra-index-url https://download.pytorch.org/whl/rocm6.2 \
+    torch torchvision torchaudio && \
     # Pin CMake to avoid incompatibility with ROCm 6.2 config files
-    && uv pip install cmake==3.29.0
+    uv pip install cmake==3.29.0 && \
+    # Verify PyTorch version and Arch
+    python3 -c "import torch; print(f'PyTorch: {torch.__version__}'); print(f'ROCm: {torch.version.hip}')"
 
 # Verify torch installation
 RUN python -c "import torch; print(f'PyTorch: {torch.__version__}, ROCm: {torch.version.hip}')"
@@ -77,8 +83,13 @@ RUN git clone "${VLLM_REPO}" vllm && \
     git checkout "${VLLM_VERSION}" && \
     # Patch: Add gfx1151 to supported architectures (robust patch)
     sed -i 's/set(HIP_SUPPORTED_ARCHS "/set(HIP_SUPPORTED_ARCHS "gfx1151;/g' CMakeLists.txt && \
-    # Patch: Fallback to torch.version.hip if amdsmi fails
-    sed -i 's/return "vllm.platforms.rocm.RocmPlatform" if is_rocm else None/import torch; return "vllm.platforms.rocm.RocmPlatform" if (is_rocm or torch.version.hip) else None/g' vllm/platforms/__init__.py
+    # Patch vLLM platform detection (Issue #20)
+    sed -i 's/return "vllm.platforms.rocm.RocmPlatform" if is_rocm else None/import torch; return "vllm.platforms.rocm.RocmPlatform" if (is_rocm or torch.version.hip) else None/g' vllm/platforms/__init__.py && \
+    sed -i 's/import amdsmi/try:\n            import amdsmi\n        except ImportError:\n            pass/g' vllm/platforms/__init__.py && \
+    sed -i 's/if len(amdsmi.amdsmi_get_processor_handles()) > 0:/if torch.version.hip:\n                is_rocm = True\n            elif len(amdsmi.amdsmi_get_processor_handles()) > 0:/g' vllm/platforms/__init__.py && \
+    # Patch vLLM fp8_utils.py for PyTorch 2.5.1 compatibility (Issue #25)
+    sed -i 's/from typing import Any, Callable, Optional, Union/from typing import Any, Callable, Optional, Union, List/g' vllm/model_executor/layers/quantization/utils/fp8_utils.py && \
+    sed -i 's/block_size: list\[int\]/block_size: List[int]/g' vllm/model_executor/layers/quantization/utils/fp8_utils.py
 
 WORKDIR /opt/vllm-build/vllm
 

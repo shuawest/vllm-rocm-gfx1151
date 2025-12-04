@@ -306,6 +306,81 @@ sed -i 's/return "vllm.platforms.rocm.RocmPlatform" if is_rocm else None/import 
 
 ---
 
+### Issue #23: Python 3.12 Type Annotation Incompatibility
+**Date**: 2025-12-03  
+**Error**: `ValueError: Parameter block_size has unsupported type list[int]` in `torch._library.infer_schema`.  
+**Root Cause**: PyTorch 2.5.1 (ROCm) internal schema inference fails with Python 3.12's generic alias types (`list[int]`) during vLLM model inspection.  
+**Fix**: Downgraded to **Python 3.10** (Stable ML standard).
+**Files Modified**: `versions.env`, `Dockerfile.ubuntu`
+
+---
+
+### Issue #24: Missing Python 3.10 on Ubuntu 24.04
+**Date**: 2025-12-03  
+**Error**: `Unable to locate package python3.10-dev`.  
+**Root Cause**: Ubuntu 24.04 defaults to Python 3.12. Python 3.10 requires the `deadsnakes` PPA.  
+**Fix**: Added `ppa:deadsnakes/ppa` to `Dockerfile.ubuntu`.
+**Files Modified**: `Dockerfile.ubuntu`
+
+---
+
+### Issue #25: PyTorch 2.5.1 Schema Inference Error with `list[int]`
+**Date**: 2025-12-03  
+**Error**: `ValueError: infer_schema(func): Parameter block_size has unsupported type list[int]`.  
+**Root Cause**: PyTorch 2.5.1's `torch.library.infer_schema` does not support PEP 585 `list[int]` type hints in custom op registration, even on Python 3.10.  
+**Fix**: Patched `vllm/model_executor/layers/quantization/utils/fp8_utils.py` to use `typing.List[int]`.
+**Files Modified**: `Dockerfile.ubuntu`
+
+---
+
+### Issue #26: SyntaxError in Platform Detection Patch
+**Date**: 2025-12-03  
+**Error**: `SyntaxError: invalid syntax` in `vllm/platforms/__init__.py`.  
+**Root Cause**: Incorrect `sed` command created invalid Python code when patching `import amdsmi`.  
+**Fix**: Corrected `sed` command to properly wrap the import in a `try/except` block.
+**Files Modified**: `Dockerfile.ubuntu`
+
+---
+
+### Issue #27: HIP Error: Invalid Device Function (Architecture Mismatch)
+**Date**: 2025-12-04  
+**Error**: `RuntimeError: HIP error: invalid device function` during inference (RotaryEmbedding).  
+**Root Cause**: The official PyTorch 2.5.1+rocm6.2 wheel likely does not contain kernels compiled for `gfx1151` (Strix Point).  
+**Fix**: Investigating `HSA_OVERRIDE_GFX_VERSION` to spoof a supported architecture (e.g., `gfx1100`).
+**Status**: Failed. `HSA_OVERRIDE_GFX_VERSION="11.0.0"` still results in `invalid device function` on simple PyTorch ops (suspected).
+**Files Modified**: `test_inference.sh`
+
+---
+
+### Issue #28: Stable PyTorch Incompatible with gfx1151
+**Date**: 2025-12-04  
+**Error**: `RuntimeError: HIP error: invalid device function` (with stable wheel) and Segfault (with spoofing).  
+**Root Cause**: Official PyTorch wheels lack `gfx1151` kernels. Spoofing `gfx1100` causes binary incompatibility crashes.  
+**Fix**: Pivoting to "Hybrid" strategy: Use TheRock nightlies (which support `gfx1151`) + vLLM Patches (to fix `amdsmi` crash).
+**Status**: Failed. `invalid device function` persists.
+**Files Modified**: `versions.env`, `Dockerfile.ubuntu`
+
+---
+
+### Issue #29: Hybrid Build (TheRock) Invalid Device Function
+**Date**: 2025-12-04
+**Error**: `RuntimeError: HIP error: invalid device function` during inference.
+**Root Cause**: Even with TheRock nightlies (supposedly gfx1151), PyTorch fails. Suspect wrong wheel installed or driver mismatch.
+**Fix**: Debugging `torch.cuda.get_arch_list()` to verify installed wheel capabilities.
+**Status**: Failed. Segfault (Memory access fault) with TheRock nightlies.
+**Files Modified**: None.
+
+---
+
+### Issue #30: All Wheels Fail - Pivoting to AMD Base Image
+**Date**: 2025-12-04
+**Error**: Segfaults with Nightlies, Invalid Device with Stable.
+**Root Cause**: Likely driver/kernel mismatch or specific Strix Point requirement not met by standard wheels.
+**Fix**: Pivoting to use AMD's official `rocm/vllm-dev` image as the base. This image is validated for Radeon (Navi).
+**Files Modified**: `Dockerfile` (planned)
+
+---
+
 ## Change Summary
 
 ### Dockerfile

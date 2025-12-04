@@ -21,8 +21,9 @@ podman run -d \
     --group-add video \
     --ipc=host \
     -p 8000:8000 \
+    -e HSA_OVERRIDE_GFX_VERSION="11.0.0" \
     -e VLLM_USE_V1=0 \
-    $IMAGE_NAME \
+    localhost/strix-vllm:amd-hybrid \
     python3 -m vllm.entrypoints.openai.api_server \
     --model Qwen/Qwen2.5-0.5B-Instruct \
     --dtype float16 \

@@ -1,0 +1,57 @@
+FROM rocm/vllm-dev:rocm7.1.1_navi_ubuntu24.04_py3.12_pytorch_2.8_vllm_0.10.2rc1
+
+# 1. Uninstall existing PyTorch and vLLM
+RUN pip uninstall -y torch torchvision torchaudio vllm
+
+# 2. Install PyTorch Build Dependencies
+RUN apt-get update && apt-get install -y \
+    cmake \
+    git \
+    python3-dev \
+    python3-pip \
+    libopenblas-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# 3. Clone PyTorch (Stable 2.5.1 or similar, or main? Let's use a known stable tag compatible with ROCm 6.2+)
+# Actually, for ROCm 7.1, we might need main or a very recent tag.
+# Let's try to clone the version that matches the one we had, or just use main.
+# Using v2.5.1 might be too old for ROCm 7.1.
+# Let's use the `release/2.5` branch or similar.
+WORKDIR /app
+RUN git clone --recursive https://github.com/pytorch/pytorch.git
+WORKDIR /app/pytorch
+# Checkout main branch for ROCm 7.1 compatibility
+RUN git checkout main
+RUN git submodule sync
+RUN git submodule update --init --recursive
+
+# 4. Build PyTorch for gfx1151
+ENV PYTORCH_ROCM_ARCH="gfx1151"
+ENV HIP_VISIBLE_DEVICES="0"
+ENV USE_ROCM=1
+ENV MAX_JOBS=8
+
+# Install requirements
+RUN pip install -r requirements.txt
+RUN pip install mkl-static mkl-include
+
+# Build
+RUN python3 setup.py install
+
+# 5. Clone and Build vLLM
+WORKDIR /app
+RUN rm -rf vllm && git clone https://github.com/vllm-project/vllm.git
+WORKDIR /app/vllm
+RUN git checkout v0.10.2
+
+# Patch vLLM (standard patches)
+RUN sed -i 's/set(HIP_SUPPORTED_ARCHS ".*")/set(HIP_SUPPORTED_ARCHS "gfx1151")/' CMakeLists.txt
+RUN sed -i 's/from typing import Any, Dict, Optional, Tuple, Union/from typing import Any, Dict, List, Optional, Tuple, Union/' vllm/model_executor/layers/quantization/utils/fp8_utils.py && \
+    sed -i 's/def normalize_e4m3_scale_per_tensor(scale: list\[int\])/def normalize_e4m3_scale_per_tensor(scale: List[int])/' vllm/model_executor/layers/quantization/utils/fp8_utils.py
+
+# Build vLLM
+ENV HIP_SUPPORTED_ARCHS="gfx1151"
+ENV VLLM_TARGET_DEVICE="rocm"
+RUN pip install --no-build-isolation -v .
+
+CMD ["/bin/bash"]
