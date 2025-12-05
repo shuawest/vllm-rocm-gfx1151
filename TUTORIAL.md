@@ -39,14 +39,29 @@ Before running the build or vLLM, ensure the following:
     ```
     *Note: The `-t` flag is required to enter your sudo password remotely.*
 
-3.  **Run the Build Pipeline**:
-    The `build_pipeline.sh` script handles everything. It uses `versions.env` to ensure a reproducible build.
+3.  **Build the Image**:
+    Use the new hybrid build script:
     ```bash
-    ./build_pipeline.sh
+    ./build_amd.sh
     ```
-    This will:
-    -   Build the Container image `strix-vllm:local` using `podman`.
-    -   Run a smoke test to verify basic functionality.
+    This creates `localhost/strix-vllm:amd-hybrid`.
+
+4.  **Run Inference**:
+    Use the test script which handles all the complex environment variables:
+    ```bash
+    ./test_inference.sh
+    ```
+    
+    **Manual Run Command (for reference):**
+    ```bash
+    podman run -it \
+        --device=/dev/kfd --device=/dev/dri --group-add video \
+        --security-opt seccomp=unconfined \
+        -p 8000:8000 \
+        -e HSA_OVERRIDE_GFX_VERSION="11.0.0" \
+        -e LD_LIBRARY_PATH="/opt/venv/lib/python3.12/site-packages/torch/lib:$LD_LIBRARY_PATH" \
+        localhost/strix-vllm:amd-hybrid
+    ```
 
 ## Maintenance & Updates
 

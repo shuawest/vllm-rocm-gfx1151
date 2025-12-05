@@ -1,40 +1,39 @@
-# vLLM Build System for AMD ROCm gfx1151
+# vLLM on AMD Strix Point (gfx1151)
 
-This repository contains two Dockerfile configurations for building vLLM with ROCm support on gfx1151 (Strix Point/Halo) hardware:
+This repository contains the build system for running **vLLM** on AMD Ryzen AI 300 Series (Strix Point) hardware, specifically the **Ryzen AI 9 HX 370**.
 
-## Dockerfiles
+## 🚀 Quick Start (Working Configuration)
 
-### Dockerfile.fedora (Primary - Red Hat Aligned)
-- **Base**: Fedora 43
-- **Purpose**: Red Hat/RHEL-aligned build for upstream contribution
-- **ROCm**: Installed from AMD's RHEL9 RPM repository
-- **Default**: This is the default build target
+The only configuration currently confirmed to work is the **AMD Hybrid Strategy** (Build #32), which uses architecture spoofing to run `gfx1100` (Navi 31) kernels on `gfx1151` hardware.
 
-### Dockerfile.ubuntu (Alternative)
-- **Base**: Ubuntu 24.04  
-- **Purpose**: Alternative build using AMD's validated platform
-- **ROCm**: Installed via `amdgpu-install` script
-- **Use Case**: When Fedora/RHEL ROCm packages have issues
-
-## Building
+### 1. Build the Image
+Run this on the `aimax` host:
 
 ```bash
-# Build Fedora version (default)
-./build_pipeline.sh
-
-# Build Ubuntu version
-DOCKERFILE=Dockerfile.ubuntu ./build_pipeline.sh
-
-# Build both
-./build_pipeline.sh && DOCKERFILE=Dockerfile.ubuntu IMAGE_NAME=strix-vllm-ubuntu ./build_pipeline.sh
+./build_amd.sh
 ```
+*This builds `localhost/strix-vllm:amd-hybrid` using the official AMD ROCm 7.1 base image and compiles vLLM from source.*
 
-## Configuration
+### 2. Run Inference
+Start the server and run a test query:
 
-Both builds use the same stable versions defined in `versions.env`:
-- ROCm: 6.3 (stable)
-- PyTorch: 2.5.0+rocm6.3
-- vLLM: v0.10.3
-- Python: 3.12
+```bash
+./test_inference.sh
+```
+*This script sets the critical environment variables for spoofing and library paths.*
 
-See `antigravity_spec.md` for full version strategy and rationale.
+---
+
+## Technical Details
+
+### The "Hybrid + Spoofing" Strategy
+- **Base Image**: `rocm/vllm-dev:rocm7.1.1...` (Official AMD)
+- **PyTorch**: Pre-installed v2.8 (Nightly)
+- **vLLM**: Compiled from source for `gfx1100`
+- **Spoofing**: `HSA_OVERRIDE_GFX_VERSION="11.0.0"` forces the runtime to treat the iGPU as a Radeon 7900 XTX.
+- **Fixes**: `LD_LIBRARY_PATH` is patched at runtime to locate PyTorch libraries.
+
+### Other Strategies (Reference)
+- **Fedora/Ubuntu**: Deprecated. Stable PyTorch wheels do not support `gfx1151`.
+- **TheRock Nightlies**: Failed due to binary incompatibility (double free errors).
+- **Nuclear Option**: Full source build of PyTorch + vLLM (available in `Dockerfile.nuclear` but untested/slow).
