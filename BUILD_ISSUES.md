@@ -381,6 +381,26 @@ sed -i 's/return "vllm.platforms.rocm.RocmPlatform" if is_rocm else None/import 
 
 ---
 
+### Issue #29: Runtime `ModuleNotFoundError: No module named 'vllm._C'`
+- **Status**: **FIXED**
+- **Description**: After successfully compiling vLLM for `gfx1100` (spoofed), the inference container failed to start with an import error for the C++ extension, even though `_C.abi3.so` existed.
+- **Root Cause**: The compiled extension was missing RPATH entries to locate the PyTorch shared libraries (`libtorch.so`, `libc10.so`) which were located in `/opt/venv/lib/python3.12/site-packages/torch/lib`.
+- **Fix**: Explicitly added the PyTorch library path to `LD_LIBRARY_PATH` in the runtime environment.
+    ```bash
+    export LD_LIBRARY_PATH="/opt/venv/lib/python3.12/site-packages/torch/lib:$LD_LIBRARY_PATH"
+    ```
+
+## Final Working Configuration (Build #32)
+- **Hardware**: AMD Ryzen AI 9 HX 370 (Strix Point / gfx1151)
+- **Base Image**: `rocm/vllm-dev:rocm7.1.1_navi_ubuntu24.04_py3.12_pytorch_2.8_vllm_0.10.2rc1`
+- **PyTorch**: Pre-installed v2.8 (Nightly)
+- **vLLM**: Compiled from source (v0.10.2)
+- **Compilation Target**: `gfx1100` (Navi 31) - *Spoofed*
+- **Runtime Override**: `HSA_OVERRIDE_GFX_VERSION="11.0.0"`
+- **Critical Environment Var**: `LD_LIBRARY_PATH` including torch libs.
+
+---
+
 ## Change Summary
 
 ### Dockerfile
