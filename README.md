@@ -2,25 +2,35 @@
 
 This repository contains the build system for running **vLLM** on AMD Ryzen AI 300 Series (Strix Point) hardware, specifically the **Ryzen AI 9 HX 370**.
 
-## 🚀 Quick Start (Working Configuration)
+# vLLM on AMD Strix Point (gfx1151)
 
-The only configuration currently confirmed to work is the **AMD Hybrid Strategy** (Build #32), which uses architecture spoofing to run `gfx1100` (Navi 31) kernels on `gfx1151` hardware.
+This repository contains the build system for running **vLLM** on AMD Ryzen AI 300 Series (Strix Point) hardware.
 
-### 1. Build the Image
-Run this on the `aimax` host:
+# vLLM on AMD Strix Point (gfx1151)
+
+This repository contains the build system for running **vLLM** on AMD Ryzen AI 300 Series (Strix Point) hardware.
+
+# vLLM on AMD Strix Point (gfx1151)
+
+This repository contains the build system for running **vLLM** on AMD Ryzen AI 300 Series (Strix Point) hardware.
+
+> [!WARNING]
+> **Experimental Status**: Both "Hybrid" (Build #32) and "Nuclear" (Build #33) strategies currently result in a **runtime hang/deadlock** during inference.
+> The vLLM server starts, but the driver hangs when executing kernels.
+> We are investigating driver-level issues.
+
+## Current Status
+- **Build #32 (Hybrid/Spoofed)**: Hangs during inference.
+- **Build #33 (Nuclear)**: Hangs during inference (confirmed 80+ min deadlock).
+
+## Build Instructions (Experimental)
+
+### Build #33 (Nuclear Option)
+This is the active build strategy, but be aware of the runtime hang.
 
 ```bash
-./build_amd.sh
+./build_nuclear.sh
 ```
-*This builds `localhost/strix-vllm:amd-hybrid` using the official AMD ROCm 7.1 base image and compiles vLLM from source.*
-
-### 2. Run Inference
-Start the server and run a test query:
-
-```bash
-./test_inference.sh
-```
-*This script sets the critical environment variables for spoofing and library paths.*
 
 ---
 

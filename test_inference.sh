@@ -21,10 +21,11 @@ podman run -d \
     --group-add video \
     --ipc=host \
     -p 8000:8000 \
-    -e HSA_OVERRIDE_GFX_VERSION="11.0.0" \
     -e LD_LIBRARY_PATH="/opt/venv/lib/python3.12/site-packages/torch/lib:$LD_LIBRARY_PATH" \
     -e VLLM_USE_V1=0 \
-    localhost/strix-vllm:amd-hybrid \
+    -e VLLM_USE_TRITON_FLASH_ATTN=0 \
+    -w / \
+    localhost/strix-vllm:nuclear \
     python3 -m vllm.entrypoints.openai.api_server \
     --model Qwen/Qwen2.5-0.5B-Instruct \
     --dtype float16 \

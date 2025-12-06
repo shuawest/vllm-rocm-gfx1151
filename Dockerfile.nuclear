@@ -31,12 +31,12 @@ ENV HIP_VISIBLE_DEVICES="0"
 ENV USE_ROCM=1
 ENV MAX_JOBS=8
 
-# Install requirements
-RUN pip install -r requirements.txt
-RUN pip install mkl-static mkl-include
+# Run hipify script to prepare for ROCm build
+RUN python3 tools/amd_build/build_amd.py
 
-# Build
-RUN python3 setup.py install
+# Build and install PyTorch
+RUN pip install -r requirements.txt
+RUN USE_ROCM=1 MAX_JOBS=8 python3 setup.py install mkl-static mkl-include
 
 # 5. Clone and Build vLLM
 WORKDIR /app

@@ -435,4 +435,67 @@ sed -i 's/return "vllm.platforms.rocm.RocmPlatform" if is_rocm else None/import 
 
 - [ ] Monitor build progress after `aioprometheus` fix
 - [ ] Document any additional issues as they arise
-- [ ] Update this log with resolution timestamps once build succeeds
+### Issue #30: Runtime Hang/Deadlock on gfx1151 (ROCm 7.1)
+- **Status**: **CONFIRMED**
+- **Description**: Both "Hybrid" (Build #32) and "Nuclear" (Build #33) builds hang indefinitely during inference with 100% CPU usage.
+- **Diagnosis**: PyTorch stress test (matrix multiplication) also hangs. This confirms a fundamental driver/kernel instability with ROCm 7.1 on Strix Point.
+- **Attempted Fix**: Enabled `amdgpu.cwsr_enable=1` (Compute Wave Save Restore).
+- **Outcome**: Failed. Deadlock persisted.
+- **Resolution**: Pivot to "Nuclear Option" with **ROCm 6.2.4** (Stable LTS).
+
+---
+
+### Issue #31: SSH Hostname Resolution Failure
+- **Date**: 2025-12-05
+- **Error**: `ssh: Could not resolve hostname aimax`
+- **Root Cause**: Local DNS or mDNS issue.
+- **Fix**: Switched to using IP address `192.168.88.12`.
+
+---
+
+### Issue #32: Missing `python3-venv` in ROCm 6.2 Base
+- **Date**: 2025-12-05
+- **Error**: `The virtual environment was not created successfully because ensurepip is not available.`
+- **Root Cause**: `rocm/dev-ubuntu-24.04:6.2.4` is a minimal image lacking `python3-venv`.
+- **Fix**: Added `python3-venv` to `apt-get install` in `Dockerfile.nuclear_6.2`.
+
+---
+
+### Issue #33: Missing `rocrand` (CMake Error)
+- **Date**: 2025-12-05
+- **Error**: `Could not find a package configuration file provided by "rocrand"`
+- **Root Cause**: Base image lacks ROCm math libraries.
+- **Fix**: Added `rocrand-dev`, `rocprim-dev`, `hiprand-dev`.
+
+---
+
+### Issue #34: Missing `rocblas` (CMake Error)
+- **Date**: 2025-12-06
+- **Error**: `Could not find a package configuration file provided by "rocblas"`
+- **Root Cause**: More missing math libraries.
+- **Fix**: Added `rocblas-dev`, `hipblas-dev`, `rocfft-dev`, `rocsolver-dev`, `rocsparse-dev`, `miopen-hip-dev`.
+
+---
+
+### Issue #35: Missing `hipblaslt` (CMake Error)
+- **Date**: 2025-12-06
+- **Error**: `Could not find a package configuration file provided by "hipblaslt"`
+- **Fix**: Added `hipblaslt-dev`, `rccl-dev`.
+
+---
+
+### Issue #36: Missing `hipfft` (CMake Error)
+- **Date**: 2025-12-06
+- **Error**: `Could not find a package configuration file provided by "hipfft"`
+- **Fix**: Added `hipfft-dev`, `hipsolver-dev`, `hipsparse-dev`, `rocthrust-dev`, `hipcub-dev`.
+
+---
+
+### Issue #37: Linker Error (Relocation out of range)
+- **Date**: 2025-12-06
+- **Error**: `relocation R_X86_64_PC32 out of range` linking `libaotriton_v2.so`
+- **Root Cause**: `aotriton` binary exceeded 2GB because it was building kernels for ALL AMD architectures (MI200, MI300, etc.).
+- **Fix**: 
+    1. Set `ENV AOTRITON_GPU_TARGETS="gfx1151"` to build only for Strix Point.
+    2. Added `ENV CXXFLAGS="-mcmodel=medium"` as a safeguard.
+
