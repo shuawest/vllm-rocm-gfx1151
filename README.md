@@ -113,6 +113,12 @@ For **simplicity**, Ollama (v0.6.2+) supports `gfx1151` out of the box with a co
 -   `QUICKSTART_SPOOF.md`: Detailed documentation for the spoofing strategy.
 -   `antigravity_spec.md`: Technical specification and project journal.
 
+## 🌐 Community Resources
+
+-   **Strix Halo HomeLab**: `strixhalo-homelab.d7.wtf` - Comprehensive wiki and Discord.
+-   **LLM Tracker (Strix Halo)**: [llm-tracker.info](https://llm-tracker.info/_TOORG/Strix-Halo) - Detailed hardware analysis and compatibility tracking.
+-   **Kyuz0's Toolboxes**: `github.com/kyuz0/amd-strix-halo-toolboxes` - Alternative Docker images.
+
 ## 🤝 Contributing
 
 We welcome contributions! If you have `gfx1151` hardware, you can help by running the verification script and reporting issues.
