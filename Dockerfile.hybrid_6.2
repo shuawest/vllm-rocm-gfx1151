@@ -53,14 +53,15 @@ RUN git clone --branch v0.10.2 --depth 1 https://github.com/vllm-project/vllm.gi
 
 # 5. Build vLLM from Source
 WORKDIR /app/vllm
-RUN pip install --no-cache-dir -r requirements-rocm.txt
+RUN pip install --no-cache-dir -r requirements/rocm.txt
+
+# Verify PyTorch detects ROCm before building
+RUN python3 -c "import torch; print(f'PyTorch ROCm: {torch.version.hip}'); assert torch.version.hip is not None, 'PyTorch not built with ROCm support!'"
 
 # Configure Build Options
 ENV ROCM_HOME="/opt/rocm"
 ENV HIP_SUPPORTED_ARCHS="gfx1151"
-ENV VLLM_TARGET_DEVICE="rocm"
-# Force vLLM to use the installed PyTorch
-ENV VLLM_USE_PRECOMPILED=1 
+ENV VLLM_TARGET_DEVICE="rocm" 
 
 # Build and Install
 RUN pip install .

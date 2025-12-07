@@ -3,7 +3,7 @@ set -e
 
 # Configuration
 NIGHTLY_IMAGE="docker.io/rocm/vllm-dev:nightly"
-DOCKERFILE="Dockerfile.spoof_locked"
+DOCKERFILE="Dockerfile.spoof"
 INFERENCE_SCRIPT="quick_inference.py"
 
 echo "🔍 Checking for new nightly updates..."

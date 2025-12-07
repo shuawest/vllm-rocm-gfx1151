@@ -5,7 +5,8 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "Dockerfile.spoof_locked"
+    paths:
+      - "Dockerfile.spoof"
 
 env:
   REGISTRY: ghcr.io
@@ -41,11 +42,14 @@ jobs:
             type=raw,value=v1.0.${{ github.run_number }}
             type=sha,format=long
 
+      - name: List files (Debug)
+        run: ls -R
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: Dockerfile.spoof_locked
+          file: ./Dockerfile.spoof
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

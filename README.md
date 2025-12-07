@@ -4,9 +4,9 @@
 ![Status](https://img.shields.io/badge/status-verified-success)
 ![Hardware](https://img.shields.io/badge/hardware-gfx1151-red)
 
-This repository provides a reliable, verified solution for running **vLLM** on AMD **Strix Point** and **Strix Halo** APUs (RDNA 3.5, `gfx1151`).
+This repository provides a working configuration for running **vLLM** on AMD **Strix Point** and **Strix Halo** APUs (RDNA 3.5, `gfx1151`).
 
-While `gfx1151` is not yet officially supported in upstream ROCm/vLLM builds, it is binary compatible with `gfx1100` (RDNA 3 / Radeon 7900 Series). This project leverages that compatibility to provide a working inference container **today**.
+Since `gfx1151` is not yet officially supported in upstream ROCm/vLLM builds, this project utilizes the binary compatibility with `gfx1100` (RDNA 3) to enable inference on this hardware. This is an experimental workaround that bypasses architecture checks to run pre-compiled kernels.
 
 ---
 
