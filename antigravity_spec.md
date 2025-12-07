@@ -96,6 +96,23 @@ To ensure reproducibility, all components must be pinned to specific versions/co
 - **Base Digest**: `sha256:a92fa9cb915027468e85e147f4dd1c87f026d7974610280546a2a1f94a146889`
 - **Artifacts**: `Dockerfile.spoof_locked`, `build_spoof_locked.sh`.
 
+### Track E: The Vulkan Speedster (llama.cpp)
+- **Status**: **DEFINED**
+- **Goal**: Maximum prompt processing throughput (~884 tok/s).
+- **Method**: Build `llama.cpp` from source with `GGML_VULKAN=ON`.
+- **Pros**: 2.5x faster prompt processing than HIP; no ROCm kernel dependency issues.
+- **Cons**: Slower token generation than HIP; different API than vLLM.
+- **Artifacts**: `Dockerfile.vulkan`, `build_vulkan.sh`.
+
+### Track F: The Simple Server (Ollama)
+- **Status**: **DEFINED**
+- **Goal**: Easiest possible deployment.
+- **Method**: Official Ollama container with memory overrides.
+- **Key Config**: `OLLAMA_GPU_MEMORY=96GB`.
+- **Pros**: Official support in v0.6.2; extremely simple.
+- **Cons**: Manual memory config required; less control.
+- **Artifacts**: `run_ollama.sh`.
+
 ## Automation Requirements
 -   **Lockfiles**: Python dependencies must be frozen in a `requirements.lock` or `uv.lock` file.
 -   **Build Script**: `build_pipeline.sh` must accept specific versions/hashes as arguments but *default* to a known-good pinned configuration.

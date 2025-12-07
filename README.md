@@ -80,6 +80,29 @@ If you wish to build the "Locked" image yourself:
 
 ---
 
+## ⚡ High Performance Alternatives
+
+Based on extensive analysis, vLLM is not the only (or always the fastest) option.
+
+### 1. llama.cpp (Vulkan Backend)
+For **maximum prompt processing speed**, the Vulkan backend is superior on `gfx1151`.
+-   **Performance**: ~884 tok/s (Prompt) vs ~349 tok/s (HIP).
+-   **Best For**: RAG applications, large prompt ingestion.
+-   **Usage**:
+    ```bash
+    ./build_vulkan.sh
+    ```
+
+### 2. Ollama
+For **simplicity**, Ollama (v0.6.2+) supports `gfx1151` out of the box with a config tweak.
+-   **Best For**: Local chat, quick testing.
+-   **Usage**:
+    ```bash
+    ./run_ollama.sh
+    ```
+
+---
+
 ## 📂 Repository Structure
 
 -   `Dockerfile.spoof_locked`: The recipe for the production image.
