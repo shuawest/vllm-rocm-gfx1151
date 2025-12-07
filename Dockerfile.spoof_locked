@@ -1,0 +1,20 @@
+# Build #36: The "Locked" Spoof (Reproducible)
+# Goal: Persist the working "Nightly Spoof" strategy into a stable image.
+# Base: rocm/vllm-dev:nightly (Pinned Digest)
+
+# We pin to the specific digest that we verified works on 2025-12-06.
+# This prevents "nightly" updates from breaking our setup.
+FROM docker.io/rocm/vllm-dev@sha256:a92fa9cb915027468e85e147f4dd1c87f026d7974610280546a2a1f94a146889
+
+# Persist the spoofing environment variables
+# This ensures the container always runs as "gfx1100" without needing runtime flags.
+ENV HSA_OVERRIDE_GFX_VERSION=11.0.0
+ENV ROC_ENABLE_PRE_VEGA=1
+
+# Set default command to launch vLLM server
+CMD ["vllm", "serve", "--help"]
+
+# Add metadata
+LABEL maintainer="aimax-builder"
+LABEL description="vLLM for gfx1151 (Strix Point) via gfx1100 spoofing"
+LABEL org.opencontainers.image.source="https://github.com/shuawest/vllm-rocm-gfx1151"

@@ -89,6 +89,13 @@ To ensure reproducibility, all components must be pinned to specific versions/co
 - **Cons**: High risk of illegal instruction crashes; relies on binary compatibility between RDNA3 and RDNA3.5.
 - **Artifacts**: `run_nightly_spoof.sh`, `QUICKSTART_SPOOF.md`.
 
+### Track D: The Locked Spoof (Reproducible)
+- **Status**: **DEFINED**
+- **Goal**: Production-ready reproducibility.
+- **Method**: Custom Docker image extending a pinned `rocm/vllm-dev` digest with baked-in spoofing variables.
+- **Base Digest**: `sha256:a92fa9cb915027468e85e147f4dd1c87f026d7974610280546a2a1f94a146889`
+- **Artifacts**: `Dockerfile.spoof_locked`, `build_spoof_locked.sh`.
+
 ## Automation Requirements
 -   **Lockfiles**: Python dependencies must be frozen in a `requirements.lock` or `uv.lock` file.
 -   **Build Script**: `build_pipeline.sh` must accept specific versions/hashes as arguments but *default* to a known-good pinned configuration.
