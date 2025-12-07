@@ -499,3 +499,27 @@ sed -i 's/return "vllm.platforms.rocm.RocmPlatform" if is_rocm else None/import 
     1. Set `ENV AOTRITON_GPU_TARGETS="gfx1151"` to build only for Strix Point.
     2. Added `ENV CXXFLAGS="-mcmodel=medium"` as a safeguard.
 
+### Issue #38: Track D (Locked Spoof) Blocked by Firmware Faults
+- **Date**: 2025-12-06
+- **Error**: `GCVM_L2_PROTECTION_FAULT_STATUS:0x00800932` / `PERMISSION_FAULTS: 0x3` in `dmesg`.
+- **Root Cause**: The GPU firmware on Strix Halo (`gfx1151`) rejects memory access from compute kernels spoofing `gfx1100`. This is a security/hardware-level block that cannot be bypassed with kernel flags (`amdgpu.noretry=0`, `iommu=pt`) or privileged containers.
+- **Resolution**: **SUSPENDED**. Requires official ROCm 8.0 support or a firmware update.
+- **Workaround**: Pivoted to Track E (Vulkan).
+
+---
+
+### Issue #39: Vulkan Build Failure (Missing `glslc`)
+- **Date**: 2025-12-06
+- **Error**: `Could NOT find Vulkan (missing: glslc)` during CMake configuration.
+- **Root Cause**: The default `vulkan-sdk` package in Ubuntu 24.04 (Noble) does not include the shader compiler `glslc`.
+- **Fix**: Added the **LunarG Noble** repository to `Dockerfile.vulkan` to install the full SDK.
+- **Files Modified**: `Dockerfile.vulkan`
+
+---
+
+### Issue #40: Vulkan Inference "Invalid Argument"
+- **Date**: 2025-12-06
+- **Error**: `error: invalid argument: /app/llama.cpp/build/bin/llama-cli`
+- **Root Cause**: The container's default `ENTRYPOINT` was `llama-server`, so passing the CLI path as an argument caused a conflict.
+- **Fix**: Overrode the entrypoint using `--entrypoint` in the run command.
+- **Files Modified**: `test_vulkan_inference.sh`

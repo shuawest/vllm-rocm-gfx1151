@@ -23,9 +23,9 @@ echo "   Command: llama-cli -m $MODEL_FILE -p 'Hello, how are you?' -n 128 -ngl 
 podman run --rm \
     --device /dev/dri \
     --security-opt seccomp=unconfined \
-    -v $(pwd):/models \
+    -v $(pwd):/models:Z \
+    --entrypoint /app/llama.cpp/build/bin/llama-cli \
     $IMAGE \
-    /app/llama.cpp/build/bin/llama-cli \
     -m /models/$MODEL_FILE \
     -p "User: Hello! Assistant:" \
     -n 128 \
