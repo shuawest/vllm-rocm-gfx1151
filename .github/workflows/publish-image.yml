@@ -9,7 +9,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  # User requested: ghcr.io/shuawest/vllm-gfx1151-spoof-locked
+  IMAGE_NAME: ${{ github.repository_owner }}/vllm-gfx1151-spoof-locked
 
 jobs:
   build-and-push:
@@ -34,10 +35,11 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # Tags: latest, and v1.0.<run_number> for auto-incrementing
           tags: |
-            type=raw,value=spoof-locked-latest
+            type=raw,value=latest
+            type=raw,value=v1.0.${{ github.run_number }}
             type=sha,format=long
-            type=date,pattern={{date 'YYYYMMDD'}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
