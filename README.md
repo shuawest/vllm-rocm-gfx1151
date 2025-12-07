@@ -8,6 +8,9 @@ This repository provides a working configuration for running **vLLM** on AMD **S
 
 Since `gfx1151` is not yet officially supported in upstream ROCm/vLLM builds, this project utilizes the binary compatibility with `gfx1100` (RDNA 3) to enable inference on this hardware. This is an experimental workaround that bypasses architecture checks to run pre-compiled kernels.
 
+> [!IMPORTANT]
+> **Host Kernel Requirement**: For Strix Halo (Ryzen AI Max 300), ensure your host is running Linux Kernel **6.16.9+**. This is critical for proper unified memory visibility (fixing the 16GB cap issue). Fedora 43 (Rawhide) is recommended.
+
 ---
 
 ## 🚀 Quickstart (The "Happy Path")

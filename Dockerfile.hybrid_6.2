@@ -64,7 +64,8 @@ ENV HIP_SUPPORTED_ARCHS="gfx1151"
 ENV VLLM_TARGET_DEVICE="rocm" 
 
 # Build and Install
-RUN pip install .
+# Use --no-build-isolation to ensure we use the pre-installed ROCm PyTorch
+RUN pip install --no-build-isolation .
 
 # 6. Final Verification
 RUN python3 -c "import torch; print(f'PyTorch: {torch.__version__}'); import vllm; print(f'vLLM: {vllm.__version__}')"
