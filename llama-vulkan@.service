@@ -1,0 +1,29 @@
+[Unit]
+Description=Llama.cpp Vulkan Inference Server - %i
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/llama-vulkan/%i.env
+ExecStart=/usr/bin/podman run --rm \
+    --name llama-vulkan-%i \
+    --replace \
+    --device /dev/dri \
+    --security-opt seccomp=unconfined \
+    -v /data/models:/models:Z \
+    -p ${PORT}:${PORT} \
+    localhost/llama-vulkan:latest \
+    -m /models/${MODEL_FILE} \
+    --host 0.0.0.0 \
+    --port ${PORT} \
+    -n ${CTX_SIZE} \
+    -ngl ${N_GPU_LAYERS} \
+    -fa 1 \
+    --no-mmap
+
+ExecStop=/usr/bin/podman stop llama-vulkan-%i
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

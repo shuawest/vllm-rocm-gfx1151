@@ -58,6 +58,41 @@ For Strix Halo, the **Vulkan backend** is the only fully verified, high-performa
 
 ---
 
+## 🏭 Production Deployment (Systemd)
+
+We provide a robust `systemd` integration to manage a fleet of models.
+
+### 1. Setup Services
+```bash
+./deploy_services.sh
+```
+This installs the `llama-vulkan@.service` template and creates `/data/models`.
+
+### 2. Download & Configure Models
+```bash
+./download_models.sh
+```
+This script fetches the latest SOTA models (Qwen 3 Coder, Llama 3.3 70B, Qwen 3 Next 80B) and generates their config files in `/etc/llama-vulkan/`.
+
+### 3. Manage Services
+Start models by their configured name:
+
+```bash
+# Start Qwen 3 Coder (Port 8081)
+sudo systemctl start llama-vulkan@qwen3-coder-30b
+
+# Start Llama 3.3 70B (Port 8082)
+sudo systemctl start llama-vulkan@llama3.3-70b
+
+# Check Status
+sudo systemctl status llama-vulkan@qwen3-coder-30b
+```
+
+> [!WARNING]
+> **Memory Limits**: The 80B models require ~48GB VRAM. Do not try to run multiple 70B/80B models simultaneously on a 64GB/128GB system.
+
+---
+
 ## 📂 Repository Structure
 
 -   `Dockerfile.vulkan`: **The Golden Image**. Ubuntu 24.04 + Vulkan SDK.
