@@ -1,16 +1,20 @@
 # Track E: The Vulkan Speedster
 # Goal: Build llama.cpp with Vulkan backend for max prompt processing speed on gfx1151.
 
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
-# Install build dependencies and Vulkan SDK
+# Install build dependencies and Vulkan SDK (System packages are new enough in 24.04)
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
     git \
     wget \
-    libvulkan-dev \
-    vulkan-tools \
+    gnupg \
+    && wget -qO - https://packages.lunarg.com/lunarg-signing-key-pub.asc | apt-key add - \
+    && wget -qO /etc/apt/sources.list.d/lunarg-vulkan-noble.list https://packages.lunarg.com/vulkan/lunarg-vulkan-noble.list \
+    && apt-get update && apt-get install -y \
+    vulkan-sdk \
+    libcurl4-openssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Clone llama.cpp
