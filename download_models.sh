@@ -11,6 +11,12 @@ if ! command -v huggingface-cli &> /dev/null; then
     pip install -U "huggingface_hub[cli]"
 fi
 
+# Sudo Keep-Alive
+echo "🔑 Acquiring sudo privilege for config generation..."
+sudo -v
+while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
+
 # Helper function to setup a model
 setup_model() {
     local NAME=$1
@@ -18,6 +24,7 @@ setup_model() {
     local FILE=$3
     local PORT=$4
     local CTX=$5
+    local EXTRA=$6
     
     echo "---------------------------------------------------"
     echo "🚀 Setting up: $NAME"
@@ -39,6 +46,7 @@ MODEL_FILE=$FILE
 PORT=$PORT
 CTX_SIZE=$CTX
 N_GPU_LAYERS=999
+EXTRA_ARGS=$EXTRA
 EOF
 
     echo "✅ Ready! Start with: sudo systemctl start llama-vulkan@$NAME"
@@ -47,8 +55,9 @@ EOF
 # --- Model Definitions ---
 
 # 1. Qwen 3 Coder 30B (Coding Specialist)
+# Note: Using lmstudio-community as it has the standard naming convention
 setup_model "qwen3-coder-30b" \
-    "bartowski/Qwen3-Coder-30B-A3B-Instruct-GGUF" \
+    "lmstudio-community/Qwen3-Coder-30B-A3B-Instruct-GGUF" \
     "Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf" \
     8081 \
     32768
@@ -62,18 +71,81 @@ setup_model "llama3.3-70b" \
 
 # 3. Qwen 3 Next 80B Instruct (General Purpose)
 setup_model "qwen3-next-80b-instruct" \
-    "bartowski/Qwen3-Next-80B-A3B-Instruct-GGUF" \
-    "Qwen3-Next-80B-A3B-Instruct-Q4_K_M.gguf" \
+    "bartowski/Qwen_Qwen3-Next-80B-A3B-Instruct-GGUF" \
+    "Qwen_Qwen3-Next-80B-A3B-Instruct-Q4_K_M.gguf" \
     8083 \
     8192
 
 # 4. Qwen 3 Next 80B Thinking (Reasoning)
 setup_model "qwen3-next-80b-thinking" \
-    "bartowski/Qwen3-Next-80B-A3B-Thinking-GGUF" \
-    "Qwen3-Next-80B-A3B-Thinking-Q4_K_M.gguf" \
+    "bartowski/Qwen_Qwen3-Next-80B-A3B-Thinking-GGUF" \
+    "Qwen_Qwen3-Next-80B-A3B-Thinking-Q4_K_M.gguf" \
     8084 \
     8192
 
+# --- NVIDIA Fleet ---
+
+# 5. AceMath 72B Instruct (Math Specialist)
+setup_model "nvidia-acemath-72b" \
+    "mradermacher/AceMath-72B-Instruct-GGUF" \
+    "AceMath-72B-Instruct.Q4_K_M.gguf" \
+    8085 \
+    8192
+
+# 6. AceMath 7B Instruct (Math Specialist - Small)
+setup_model "nvidia-acemath-7b" \
+    "mradermacher/AceMath-7B-Instruct-GGUF" \
+    "AceMath-7B-Instruct.Q4_K_M.gguf" \
+    8086 \
+    32768
+
+# 7. Nemotron Super 49B (Llama 3.3 Derivative)
+setup_model "nvidia-nemotron-49b" \
+    "bartowski/Llama-3.3-Nemotron-Super-49B-v1.5-GGUF" \
+    "Llama-3.3-Nemotron-Super-49B-v1.5-Q4_K_M.gguf" \
+    8087 \
+    8192
+
+# 8. Nemotron Nano 12B (Mistral-Nemo based?)
+setup_model "nvidia-nemotron-12b" \
+    "bartowski/NVIDIA-Nemotron-Nano-12B-v2-GGUF" \
+    "NVIDIA-Nemotron-Nano-12B-v2-Q4_K_M.gguf" \
+    8088 \
+    8192
+
+# 9. NV-Reason-CXR-3B (Medical VLM)
+# Note: Requires multimodal projector (mmproj). Skipping auto-setup for now as it needs extra files.
+# setup_model "nvidia-cxr-3b" ...
+
+# 10. CoEmbed 3B (Embedding Model)
+setup_model "nvidia-coembed-3b" \
+    "bartowski/Llama-NeMoRetriever-CoEmbed-3B-v1-GGUF" \
+    "Llama-NeMoRetriever-CoEmbed-3B-v1-Q4_K_M.gguf" \
+    8089 \
+    8192 \
+    "--embedding"
+
+# 11. OpenReasoning Nemotron 32B (Reasoning Specialist)
+setup_model "nvidia-openreasoning-32b" \
+    "bartowski/OpenReasoning-Nemotron-32B-GGUF" \
+    "OpenReasoning-Nemotron-32B-Q4_K_M.gguf" \
+    8090 \
+    32768
+
+# 12. Nemotron 8B UltraLong (1M Context)
+setup_model "nvidia-nemotron-8b-ultralong" \
+    "bartowski/Llama-3.1-Nemotron-8B-UltraLong-1M-Instruct-GGUF" \
+    "Llama-3.1-Nemotron-8B-UltraLong-1M-Instruct-Q4_K_M.gguf" \
+    8091 \
+    131072
+    # Note: 1M context requires massive RAM. Capped at 128k for safety.
+
 echo "---------------------------------------------------"
 echo "🎉 All models configured!"
-echo "⚠️  NOTE: 80B models require ~48GB VRAM. Run only ONE at a time."
+echo "⚠️  NOTE: 80B/72B models require ~48GB VRAM. Run only ONE at a time."
+echo "⚠️  Skipped (Not Supported/No GGUF):"
+echo "   - Cosmos (Diffusion/World Model)"
+echo "   - Hymba (Architecture not supported in llama.cpp yet)"
+echo "   - MambaVision (No GGUF)"
+echo "   - NV-Embed-v2 (No GGUF)"
+echo "   - Reward Models (No GGUF)"

@@ -19,7 +19,8 @@ ExecStart=/usr/bin/podman run --rm \
     -n ${CTX_SIZE} \
     -ngl ${N_GPU_LAYERS} \
     -fa 1 \
-    --no-mmap
+    --no-mmap \
+    ${EXTRA_ARGS}
 
 ExecStop=/usr/bin/podman stop llama-vulkan-%i
 Restart=always
