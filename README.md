@@ -67,9 +67,11 @@ We are actively developing and testing multiple build tracks to ensure long-term
 | Track | Name | Strategy | Status | Description |
 | :--- | :--- | :--- | :--- | :--- |
 | **D** | **Locked Spoof** | Custom Docker Image | ✅ **Recommended** | Extends verified nightly with baked-in config. Reproducible. |
+| **E** | **Vulkan Speedster** | llama.cpp (Vulkan) | 🔄 Building | **Fastest Prompt Processing** (884 tok/s). Ideal for RAG. |
+| **F** | **Simple Server** | Ollama | ✅ **Working** | Easiest deployment. Official support in v0.6.2. |
 | **C** | **Nightly Spoof** | Runtime Flags | ✅ **Working** | Running `rocm/vllm-dev:nightly` directly with env vars. Good for testing latest features. |
-| **A** | **Nuclear Option** | Source Build | 🔄 Building | Full compilation of PyTorch & vLLM from source. Extremely slow (~4h) but theoretically most stable. |
-| **B** | **Hybrid Option** | PyTorch Wheels | ⚠️ Experimental | Uses official ROCm wheels + vLLM source. Faster build, but debugging dependency issues. |
+| **A** | **Nuclear Option** | Source Build | 🛑 Failed | Full compilation of PyTorch & vLLM from source. Too unstable/slow. |
+| **B** | **Hybrid Option** | PyTorch Wheels | 🛑 Failed | Uses official ROCm wheels + vLLM source. Dependency hell. |
 
 ### Building from Source
 If you wish to build the "Locked" image yourself:

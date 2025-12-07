@@ -75,6 +75,18 @@ To ensure reproducibility, all components must be pinned to specific versions/co
 -   **Source**: `https://github.com/ROCm/flash-attention.git`
 -   **Strategy**: Pin to a stable commit from `main_perf` branch (late 2024)
 
+## 8. Documentation Hygiene (CRITICAL)
+**Rule**: Every new build track or significant feature MUST be documented in three places BEFORE code is considered "done":
+1.  **README.md**: Add to the "Build Strategies" table and "Quickstart" if applicable.
+2.  **antigravity_spec.md**: Define the track's Goal, Method, Pros/Cons, and Artifacts.
+3.  **Git**: All changes must be committed with a descriptive message immediately.
+
+**Failure to update documentation is a failure of the task.**
+
+## 9. Future Roadmap
+-   **Track G (Rusticl)**: Explore Rust-based OpenCL implementation for non-ROCm workloads.
+-   **Track H (Tinygrad)**: Investigate the "AM" backend for userspace driver bypass.
+
 ## Red Hat Alignment
 -   **Container Engine**: Use `podman` by default.
 -   **Base Image**: Fedora.
