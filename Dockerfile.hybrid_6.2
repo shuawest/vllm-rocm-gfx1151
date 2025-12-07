@@ -1,0 +1,71 @@
+# Build #35: The Hybrid Option (ROCm 6.2 Edition)
+# Goal: Use official PyTorch wheels (fast) + vLLM source build
+# Base Image: Official AMD ROCm 6.2.4 Development Image (Ubuntu 24.04)
+
+FROM docker.io/rocm/dev-ubuntu-24.04:6.2.4
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+
+# 1. Install System Dependencies
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    python3-dev \
+    python3-venv \
+    git \
+    cmake \
+    ninja-build \
+    libnuma-dev \
+    libsndfile1 \
+    libtinfo-dev \
+    libxml2-dev \
+    libedit-dev \
+    rocrand-dev \
+    rocprim-dev \
+    hiprand-dev \
+    rocblas-dev \
+    hipblas-dev \
+    rocfft-dev \
+    rocsolver-dev \
+    rocsparse-dev \
+    miopen-hip-dev \
+    hipblaslt-dev \
+    rccl-dev \
+    hipfft-dev \
+    hipsolver-dev \
+    hipsparse-dev \
+    rocthrust-dev \
+    hipcub-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# 2. Setup Python Environment
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel packaging uv
+
+# 3. Install PyTorch from Official ROCm 6.2 Wheels
+# This saves ~2 hours of build time
+RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.2
+
+# 4. Clone vLLM (Stable v0.10.3)
+WORKDIR /app
+RUN git clone --branch v0.10.3 --depth 1 https://github.com/vllm-project/vllm.git
+
+# 5. Build vLLM from Source
+WORKDIR /app/vllm
+RUN pip install --no-cache-dir -r requirements-rocm.txt
+
+# Configure Build Options
+ENV ROCM_HOME="/opt/rocm"
+ENV HIP_SUPPORTED_ARCHS="gfx1151"
+ENV VLLM_TARGET_DEVICE="rocm"
+# Force vLLM to use the installed PyTorch
+ENV VLLM_USE_PRECOMPILED=1 
+
+# Build and Install
+RUN pip install .
+
+# 6. Final Verification
+RUN python3 -c "import torch; print(f'PyTorch: {torch.__version__}'); import vllm; print(f'vLLM: {vllm.__version__}')"
+
+CMD ["/bin/bash"]

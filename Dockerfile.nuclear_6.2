@@ -46,25 +46,30 @@ RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Install build dependencies
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel packaging
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel packaging uv
 
 # 3. Clone PyTorch (Stable v2.5.1)
 WORKDIR /app
-# We use the 'release/2.5' branch or 'v2.5.1' tag. 
+# We use the 'release/2.5' branch or 'v2.5.1' tag.
 # Using recursive clone for submodules.
-RUN git clone --recursive --branch v2.5.1 --depth 1 https://github.com/pytorch/pytorch.git
-
 # 4. Build PyTorch from Source
 WORKDIR /app/pytorch
-
-# Install PyTorch build requirements
-RUN pip install --no-cache-dir -r requirements.txt
+RUN git clone --recursive --depth 1 --branch v2.5.1 https://github.com/pytorch/pytorch.git . \
+    && git submodule sync \
+    && git submodule update --init --recursive \
+    # Patch to force aotriton to only build for gfx1151.
+    # We inject the variable definition before it's used.
+    && sed -i '1s/^/set(AOTRITON_GPU_TARGETS "gfx1151" CACHE STRING "" FORCE)\n/' CMakeLists.txt \
+    && uv pip install -r requirements.txt \
+    && uv pip install mkl-static mkl-include
 
 # Configure Build Options for ROCm 6.2 + gfx1151
 # We explicitly target gfx1151. If the compiler fails, we might need to fallback to gfx1100.
 ENV PYTORCH_ROCM_ARCH="gfx1151"
 # Restrict aotriton to gfx1151 to prevent linker errors (relocation out of range)
 ENV AOTRITON_GPU_TARGETS="gfx1151"
+# Pass this to CMake via CMAKE_ARGS to ensure it's picked up
+ENV CMAKE_ARGS="-DAOTRITON_GPU_TARGETS=gfx1151"
 # Force medium code model to handle large binaries if they still occur
 ENV CFLAGS="-mcmodel=medium"
 ENV CXXFLAGS="-mcmodel=medium"
