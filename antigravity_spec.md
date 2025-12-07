@@ -80,6 +80,15 @@ To ensure reproducibility, all components must be pinned to specific versions/co
 -   **Base Image**: Fedora.
 -   **Packaging**: While not building RPMs yet, the Dockerfile structure should mirror Red Hat's AI containers (e.g., installing dependencies via `dnf`, keeping the environment clean).
 
+### Track C: The Nightly Spoof (Instant)
+- **Status**: **VERIFIED WORKING (2025-12-06)**
+- **Goal**: Immediate verification.
+- **Method**: Run the existing `rocm/vllm-dev:nightly` image with aggressive hardware spoofing.
+- **Key Config**: `HSA_OVERRIDE_GFX_VERSION=11.0.0` (Spoof `gfx1100`/Navi31).
+- **Pros**: Zero build time.
+- **Cons**: High risk of illegal instruction crashes; relies on binary compatibility between RDNA3 and RDNA3.5.
+- **Artifacts**: `run_nightly_spoof.sh`, `QUICKSTART_SPOOF.md`.
+
 ## Automation Requirements
 -   **Lockfiles**: Python dependencies must be frozen in a `requirements.lock` or `uv.lock` file.
 -   **Build Script**: `build_pipeline.sh` must accept specific versions/hashes as arguments but *default* to a known-good pinned configuration.

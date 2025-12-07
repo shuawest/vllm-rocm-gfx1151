@@ -47,9 +47,9 @@ RUN pip install --no-cache-dir --upgrade pip setuptools wheel packaging uv
 # This saves ~2 hours of build time
 RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.2
 
-# 4. Clone vLLM (Stable v0.10.3)
+# 4. Clone vLLM (Stable v0.10.2)
 WORKDIR /app
-RUN git clone --branch v0.10.3 --depth 1 https://github.com/vllm-project/vllm.git
+RUN git clone --branch v0.10.2 --depth 1 https://github.com/vllm-project/vllm.git
 
 # 5. Build vLLM from Source
 WORKDIR /app/vllm

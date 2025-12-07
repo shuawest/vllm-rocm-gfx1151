@@ -12,12 +12,18 @@ echo "   Spoofing: gfx1100 (Navi31)"
 export HSA_OVERRIDE_GFX_VERSION=11.0.0
 export ROC_ENABLE_PRE_VEGA=1
 
-echo "Running vLLM with spoofing..."
-podman run -it --rm \
+echo "Running vLLM Inference Test (Spoofing)..."
+# Read python script into variable to pass it safely
+PY_SCRIPT=$(cat quick_inference.py)
+
+podman run --rm \
+    --name vllm_spoof_inference \
     --device /dev/kfd \
     --device /dev/dri \
     --security-opt seccomp=unconfined \
     --env HSA_OVERRIDE_GFX_VERSION=11.0.0 \
     --env ROC_ENABLE_PRE_VEGA=1 \
     docker.io/rocm/vllm-dev:nightly \
-    python3 -c "import torch; print(f'PyTorch: {torch.__version__}'); print(f'CUDA Available: {torch.cuda.is_available()}'); import vllm; print(f'vLLM: {vllm.__version__}')"
+    python3 -c "$PY_SCRIPT" > run_nightly_inference.log 2>&1
+
+echo "✅ Inference Test Complete. Check run_nightly_inference.log"
