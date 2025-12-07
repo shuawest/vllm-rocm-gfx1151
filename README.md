@@ -1,49 +1,99 @@
 # vLLM on AMD Strix Point (gfx1151)
 
-This repository contains the build system for running **vLLM** on AMD Ryzen AI 300 Series (Strix Point) hardware, specifically the **Ryzen AI 9 HX 370**.
+![License](https://img.shields.io/badge/license-Apache%202.0-blue)
+![Status](https://img.shields.io/badge/status-verified-success)
+![Hardware](https://img.shields.io/badge/hardware-gfx1151-red)
 
-# vLLM on AMD Strix Point (gfx1151)
+This repository provides a reliable, verified solution for running **vLLM** on AMD **Strix Point** and **Strix Halo** APUs (RDNA 3.5, `gfx1151`).
 
-This repository contains the build system for running **vLLM** on AMD Ryzen AI 300 Series (Strix Point) hardware.
+While `gfx1151` is not yet officially supported in upstream ROCm/vLLM builds, it is binary compatible with `gfx1100` (RDNA 3 / Radeon 7900 Series). This project leverages that compatibility to provide a working inference container **today**.
 
-# vLLM on AMD Strix Point (gfx1151)
+---
 
-This repository contains the build system for running **vLLM** on AMD Ryzen AI 300 Series (Strix Point) hardware.
+## 🚀 Quickstart (The "Happy Path")
 
-# vLLM on AMD Strix Point (gfx1151)
+The easiest way to get started is to use our **Verified Locked Image**. This image is automatically tested on real `gfx1151` hardware and pinned to a known-good version.
 
-This repository contains the build system for running **vLLM** on AMD Ryzen AI 300 Series (Strix Point) hardware.
-
-> [!WARNING]
-> **Experimental Status**: Both "Hybrid" (Build #32) and "Nuclear" (Build #33) strategies currently result in a **runtime hang/deadlock** during inference.
-> The vLLM server starts, but the driver hangs when executing kernels.
-> We are investigating driver-level issues.
-
-## Current Status
-- **Build #32 (Hybrid/Spoofed)**: Hangs during inference.
-- **Build #33 (Nuclear)**: Hangs during inference (confirmed 80+ min deadlock).
-
-## Build Instructions (Experimental)
-
-### Build #33 (Nuclear Option)
-This is the active build strategy, but be aware of the runtime hang.
+### Option 1: Run the Pre-built Container
+We publish a production-ready image to GitHub Container Registry. It comes with the necessary environment variables baked in.
 
 ```bash
-./build_nuclear.sh
+# Pull and run the server (serving OPT-125M as an example)
+podman run -it --rm \
+    --device /dev/kfd \
+    --device /dev/dri \
+    --security-opt seccomp=unconfined \
+    -p 8000:8000 \
+    ghcr.io/shuawest/vllm-gfx1151-spoof-locked:latest \
+    vllm serve facebook/opt-125m
+```
+
+### Option 2: Use the Helper Script
+Clone this repository and use the provided script, which handles device permissions and flags for you.
+
+```bash
+git clone https://github.com/shuawest/vllm-rocm-gfx1151.git
+cd vllm-rocm-gfx1151
+./run_nightly_spoof.sh
 ```
 
 ---
 
-## Technical Details
+## 🛠️ How It Works
 
-### The "Hybrid + Spoofing" Strategy
-- **Base Image**: `rocm/vllm-dev:rocm7.1.1...` (Official AMD)
-- **PyTorch**: Pre-installed v2.8 (Nightly)
-- **vLLM**: Compiled from source for `gfx1100`
-- **Spoofing**: `HSA_OVERRIDE_GFX_VERSION="11.0.0"` forces the runtime to treat the iGPU as a Radeon 7900 XTX.
-- **Fixes**: `LD_LIBRARY_PATH` is patched at runtime to locate PyTorch libraries.
+### The "Spoofing" Strategy (Track C/D)
+Since RDNA 3.5 (`gfx1151`) shares the same ISA as RDNA 3 (`gfx1100`), we can force the ROCm runtime to load kernels compiled for the latter.
 
-### Other Strategies (Reference)
-- **Fedora/Ubuntu**: Deprecated. Stable PyTorch wheels do not support `gfx1151`.
-- **TheRock Nightlies**: Failed due to binary incompatibility (double free errors).
-- **Nuclear Option**: Full source build of PyTorch + vLLM (available in `Dockerfile.nuclear` but untested/slow).
+-   **Base Image**: Official `rocm/vllm-dev:nightly` (pinned to a verified digest).
+-   **Environment Overrides**:
+    -   `HSA_OVERRIDE_GFX_VERSION=11.0.0`: Tells ROCm to treat the GPU as `gfx1100`.
+    -   `ROC_ENABLE_PRE_VEGA=1`: Sometimes required for APU compatibility.
+
+We maintain a **Continuous Verification** pipeline:
+1.  A script (`verify_and_update_nightly.sh`) runs on a physical `gfx1151` machine.
+2.  It pulls the latest nightly and runs a real inference test.
+3.  If successful, it updates the `Dockerfile.spoof_locked` and pushes to this repo.
+4.  GitHub Actions builds and publishes the new stable image.
+
+---
+
+## 🏗️ Build Strategies (Advanced)
+
+We are actively developing and testing multiple build tracks to ensure long-term stability.
+
+| Track | Name | Strategy | Status | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **D** | **Locked Spoof** | Custom Docker Image | ✅ **Recommended** | Extends verified nightly with baked-in config. Reproducible. |
+| **C** | **Nightly Spoof** | Runtime Flags | ✅ **Working** | Running `rocm/vllm-dev:nightly` directly with env vars. Good for testing latest features. |
+| **A** | **Nuclear Option** | Source Build | 🔄 Building | Full compilation of PyTorch & vLLM from source. Extremely slow (~4h) but theoretically most stable. |
+| **B** | **Hybrid Option** | PyTorch Wheels | ⚠️ Experimental | Uses official ROCm wheels + vLLM source. Faster build, but debugging dependency issues. |
+
+### Building from Source
+If you wish to build the "Locked" image yourself:
+
+```bash
+./build_spoof_locked.sh
+```
+
+---
+
+## 📂 Repository Structure
+
+-   `Dockerfile.spoof_locked`: The recipe for the production image.
+-   `run_nightly_spoof.sh`: Helper script for local testing.
+-   `verify_and_update_nightly.sh`: The CI script that runs on hardware to verify new versions.
+-   `QUICKSTART_SPOOF.md`: Detailed documentation for the spoofing strategy.
+-   `antigravity_spec.md`: Technical specification and project journal.
+
+## 🤝 Contributing
+
+We welcome contributions! If you have `gfx1151` hardware, you can help by running the verification script and reporting issues.
+
+1.  Fork the repo.
+2.  Run `./verify_and_update_nightly.sh` to test the latest upstream changes.
+3.  Submit a PR if you find a new working configuration.
+
+---
+
+**Maintainer**: [Your Name/Handle]
+**License**: Apache 2.0
