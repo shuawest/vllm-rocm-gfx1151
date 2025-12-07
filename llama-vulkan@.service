@@ -4,8 +4,12 @@ After=network.target
 
 [Service]
 Type=simple
+User=jowest
+Group=jowest
+Environment="HOME=/home/jowest"
+Environment="XDG_RUNTIME_DIR=/run/user/1000"
 EnvironmentFile=/etc/llama-vulkan/%i.env
-ExecStart=/usr/bin/podman run --rm \
+ExecStart=/usr/bin/podman run \
     --name llama-vulkan-%i \
     --replace \
     --device /dev/dri \
@@ -19,8 +23,7 @@ ExecStart=/usr/bin/podman run --rm \
     -n ${CTX_SIZE} \
     -ngl ${N_GPU_LAYERS} \
     -fa 1 \
-    --no-mmap \
-    ${EXTRA_ARGS}
+    --no-mmap
 
 ExecStop=/usr/bin/podman stop llama-vulkan-%i
 Restart=always

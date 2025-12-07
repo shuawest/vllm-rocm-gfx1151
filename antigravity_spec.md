@@ -92,6 +92,18 @@ To ensure reproducibility, all components must be pinned to specific versions/co
 -   **Base Image**: Fedora.
 -   **Packaging**: While not building RPMs yet, the Dockerfile structure should mirror Red Hat's AI containers (e.g., installing dependencies via `dnf`, keeping the environment clean).
 
+# Antigravity Specification
+
+## Model Verification Process
+To ensure model availability and correct configuration, the following process is used:
+1.  **Repo ID Verification**: Search Hugging Face for the exact `repo_id` (e.g., `bartowski/nvidia_Llama...`). Note that `bartowski` often uses `nvidia_` prefixes for NVIDIA models.
+2.  **Filename Verification**: Search the specific repository file list to confirm the GGUF filename.
+    - **Qwen Models**: Often have `Qwen_` in BOTH repo name and filename (e.g., `Qwen_Qwen3...`).
+    - **NVIDIA Models**: Often have `nvidia_` in BOTH repo name and filename.
+3.  **GGUF Availability**: Confirm that a `Q4_K_M` (or similar) quantization exists.
+4.  **Context Length**: Verify the model's supported context length (e.g., 32k, 128k) to set `CTX_SIZE` correctly.
+
+## Project Overview
 ### Track C: The Nightly Spoof (Instant)
 - **Status**: **VERIFIED WORKING (2025-12-06)**
 - **Goal**: Immediate verification.

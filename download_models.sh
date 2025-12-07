@@ -41,13 +41,15 @@ setup_model() {
 
     # 2. Create Config
     echo "📝 Generating config: $CONFIG_DIR/$NAME.env"
-    cat <<EOF | sudo tee $CONFIG_DIR/$NAME.env > /dev/null
-MODEL_FILE=$FILE
-PORT=$PORT
-CTX_SIZE=$CTX
-N_GPU_LAYERS=999
-EXTRA_ARGS=$EXTRA
-EOF
+    {
+        echo "MODEL_FILE=$FILE"
+        echo "PORT=$PORT"
+        echo "CTX_SIZE=$CTX"
+        echo "N_GPU_LAYERS=999"
+        if [ -n "$EXTRA" ]; then
+            echo "EXTRA_ARGS=$EXTRA"
+        fi
+    } | sudo tee $CONFIG_DIR/$NAME.env > /dev/null
 
     echo "✅ Ready! Start with: sudo systemctl start llama-vulkan@$NAME"
 }
@@ -101,15 +103,15 @@ setup_model "nvidia-acemath-7b" \
 
 # 7. Nemotron Super 49B (Llama 3.3 Derivative)
 setup_model "nvidia-nemotron-49b" \
-    "bartowski/Llama-3.3-Nemotron-Super-49B-v1.5-GGUF" \
-    "Llama-3.3-Nemotron-Super-49B-v1.5-Q4_K_M.gguf" \
+    "bartowski/nvidia_Llama-3_3-Nemotron-Super-49B-v1_5-GGUF" \
+    "nvidia_Llama-3_3-Nemotron-Super-49B-v1_5-Q4_K_M.gguf" \
     8087 \
     8192
 
 # 8. Nemotron Nano 12B (Mistral-Nemo based?)
 setup_model "nvidia-nemotron-12b" \
-    "bartowski/NVIDIA-Nemotron-Nano-12B-v2-GGUF" \
-    "NVIDIA-Nemotron-Nano-12B-v2-Q4_K_M.gguf" \
+    "bartowski/nvidia_NVIDIA-Nemotron-Nano-12B-v2-GGUF" \
+    "nvidia_NVIDIA-Nemotron-Nano-12B-v2-Q4_K_M.gguf" \
     8088 \
     8192
 
@@ -118,24 +120,25 @@ setup_model "nvidia-nemotron-12b" \
 # setup_model "nvidia-cxr-3b" ...
 
 # 10. CoEmbed 3B (Embedding Model)
-setup_model "nvidia-coembed-3b" \
-    "bartowski/Llama-NeMoRetriever-CoEmbed-3B-v1-GGUF" \
-    "Llama-NeMoRetriever-CoEmbed-3B-v1-Q4_K_M.gguf" \
-    8089 \
-    8192 \
-    "--embedding"
+# Note: No GGUF available yet. Manual setup required.
+# setup_model "nvidia-coembed-3b" \
+#     "bartowski/nvidia_Llama-NeMoRetriever-CoEmbed-3B-v1-GGUF" \
+#     "nvidia_Llama-NeMoRetriever-CoEmbed-3B-v1-Q4_K_M.gguf" \
+#     8089 \
+#     8192 \
+#     "--embedding"
 
 # 11. OpenReasoning Nemotron 32B (Reasoning Specialist)
 setup_model "nvidia-openreasoning-32b" \
-    "bartowski/OpenReasoning-Nemotron-32B-GGUF" \
-    "OpenReasoning-Nemotron-32B-Q4_K_M.gguf" \
+    "bartowski/nvidia_OpenReasoning-Nemotron-32B-GGUF" \
+    "nvidia_OpenReasoning-Nemotron-32B-Q4_K_M.gguf" \
     8090 \
     32768
 
 # 12. Nemotron 8B UltraLong (1M Context)
 setup_model "nvidia-nemotron-8b-ultralong" \
-    "bartowski/Llama-3.1-Nemotron-8B-UltraLong-1M-Instruct-GGUF" \
-    "Llama-3.1-Nemotron-8B-UltraLong-1M-Instruct-Q4_K_M.gguf" \
+    "bartowski/nvidia_Llama-3.1-8B-UltraLong-1M-Instruct-GGUF" \
+    "nvidia_Llama-3.1-8B-UltraLong-1M-Instruct-Q4_K_M.gguf" \
     8091 \
     131072
     # Note: 1M context requires massive RAM. Capped at 128k for safety.
