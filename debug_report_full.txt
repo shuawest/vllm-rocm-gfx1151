@@ -1,0 +1,678 @@
+=== DATE ===
+Sun Dec  7 18:30:36 EST 2025
+
+=== SYSTEMCTL STATUS ===
+● nvidia-nim@nemotron9b.service - NVIDIA NIM Inference Service - nemotron9b
+     Loaded: loaded (/etc/systemd/system/nvidia-nim@.service; disabled; preset: enabled)
+     Active: active (running) since Sun 2025-12-07 18:24:10 EST; 6min ago
+   Main PID: 134097 (docker)
+      Tasks: 12 (limit: 153568)
+     Memory: 9.2M (peak: 10.7M)
+        CPU: 64ms
+     CGroup: /system.slice/system-nvidia\x2dnim.slice/nvidia-nim@nemotron9b.service
+             └─134097 /usr/bin/docker run --rm --name nim-nemotron9b --gpus all --shm-size=16g -e ACCEPT_NVIDIA_TOS=1 -e NGC_API_KEY=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 -e NIM_GPU_MEM_FRACTION=0.15 -v /home/jowest/.cache/nim:/opt/nim/.cache -v /etc/nvidia-nim:/etc/nvidia-nim:ro -p 8003:8000 nvcr.io/nim/nvidia/nvidia-nemotron-nano-9b-v2-dgx-spark:1.0.0-variant
+
+Dec 07 18:26:58 jowestdgx bash[134097]:     "top_p": 1,
+Dec 07 18:26:58 jowestdgx bash[134097]:     "n": 1,
+Dec 07 18:26:58 jowestdgx bash[134097]:     "max_tokens": 15,
+Dec 07 18:26:58 jowestdgx bash[134097]:     "frequency_penalty": 1.0,
+Dec 07 18:26:58 jowestdgx bash[134097]:     "stop": ["hello"]
+Dec 07 18:26:58 jowestdgx bash[134097]:   }'
+Dec 07 18:26:58 jowestdgx bash[134097]: INFO 2025-12-07 23:26:58.596 on.py:62] Application startup complete.
+Dec 07 18:26:58 jowestdgx bash[134097]: INFO 2025-12-07 23:26:58.597 server.py:214] Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+Dec 07 18:27:17 jowestdgx bash[134097]: INFO 2025-12-07 23:27:17.080 httptools_impl.py:481] 192.168.88.247:56461 - "GET /v1/models HTTP/1.1" 200
+Dec 07 18:27:17 jowestdgx bash[134097]: INFO 2025-12-07 23:27:17.234 httptools_impl.py:481] 192.168.88.247:56461 - "GET /favicon.ico HTTP/1.1" 404
+
+● nvidia-nim@qwen32b.service - NVIDIA NIM Inference Service - qwen32b
+     Loaded: loaded (/etc/systemd/system/nvidia-nim@.service; enabled; preset: enabled)
+     Active: active (running) since Sun 2025-12-07 18:28:41 EST; 1min 54s ago
+    Process: 137271 ExecStartPre=/usr/bin/docker stop nim-qwen32b (code=exited, status=1/FAILURE)
+    Process: 137281 ExecStartPre=/usr/bin/docker rm nim-qwen32b (code=exited, status=1/FAILURE)
+   Main PID: 137292 (docker)
+      Tasks: 11 (limit: 153568)
+     Memory: 9.3M (peak: 10.9M)
+        CPU: 57ms
+     CGroup: /system.slice/system-nvidia\x2dnim.slice/nvidia-nim@qwen32b.service
+             └─137292 /usr/bin/docker run --rm --name nim-qwen32b --gpus all --shm-size=16g -e ACCEPT_NVIDIA_TOS=1 -e NGC_API_KEY=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 -e NIM_GPU_MEM_FRACTION=0.60 -v /home/jowest/.cache/nim:/opt/nim/.cache -v /etc/nvidia-nim:/etc/nvidia-nim:ro -p 8001:8000 nvcr.io/nim/qwen/qwen3-32b-dgx-spark:1.1.0-variant
+
+Dec 07 18:29:00 jowestdgx bash[137292]: [Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+Dec 07 18:29:00 jowestdgx bash[137292]: (EngineCore_0 pid=196) INFO 12-07 23:29:00 [parallel_state.py:1134] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0
+Dec 07 18:29:00 jowestdgx bash[137292]: (EngineCore_0 pid=196) INFO 12-07 23:29:00 [topk_topp_sampler.py:50] Using FlashInfer for top-p & top-k sampling.
+Dec 07 18:29:00 jowestdgx bash[137292]: (EngineCore_0 pid=196) INFO 12-07 23:29:00 [gpu_model_runner.py:1953] Starting to load model /opt/nim/workspace...
+Dec 07 18:29:01 jowestdgx bash[137292]: (EngineCore_0 pid=196) INFO 12-07 23:29:01 [gpu_model_runner.py:1985] Loading model from scratch...
+Dec 07 18:29:01 jowestdgx bash[137292]: (EngineCore_0 pid=196) INFO 12-07 23:29:01 [cuda.py:328] Using Flash Attention backend on V1 engine.
+Dec 07 18:29:02 jowestdgx bash[137292]: [100B blob data]
+Dec 07 18:29:30 jowestdgx bash[137292]: [108B blob data]
+Dec 07 18:29:40 jowestdgx bash[137292]: [108B blob data]
+Dec 07 18:30:07 jowestdgx bash[137292]: [108B blob data]
+
+● nvidia-nim@llama8b.service - NVIDIA NIM Inference Service - llama8b
+     Loaded: loaded (/etc/systemd/system/nvidia-nim@.service; disabled; preset: enabled)
+     Active: active (running) since Sun 2025-12-07 18:24:10 EST; 6min ago
+   Main PID: 134240 (docker)
+      Tasks: 13 (limit: 153568)
+     Memory: 9.2M (peak: 11.2M)
+        CPU: 66ms
+     CGroup: /system.slice/system-nvidia\x2dnim.slice/nvidia-nim@llama8b.service
+             └─134240 /usr/bin/docker run --rm --name nim-llama8b --gpus all --shm-size=16g -e ACCEPT_NVIDIA_TOS=1 -e NGC_API_KEY=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 -e NIM_GPU_MEM_FRACTION=0.15 -v /home/jowest/.cache/nim:/opt/nim/.cache -v /etc/nvidia-nim:/etc/nvidia-nim:ro -p 8002:8000 nvcr.io/nim/meta/llama-3.1-8b-instruct-dgx-spark:1.0.0-variant
+
+Dec 07 18:25:59 jowestdgx bash[134240]:     with launch_core_engines(vllm_config, executor_class,
+Dec 07 18:25:59 jowestdgx bash[134240]:   File "/usr/lib/python3.12/contextlib.py", line 144, in __exit__
+Dec 07 18:25:59 jowestdgx bash[134240]:     next(self.gen)
+Dec 07 18:25:59 jowestdgx bash[134240]:   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/utils.py", line 706, in launch_core_engines
+Dec 07 18:25:59 jowestdgx bash[134240]:     wait_for_engine_startup(
+Dec 07 18:25:59 jowestdgx bash[134240]:   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/utils.py", line 759, in wait_for_engine_startup
+Dec 07 18:25:59 jowestdgx bash[134240]:     raise RuntimeError("Engine core initialization failed. "
+Dec 07 18:25:59 jowestdgx bash[134240]: RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+Dec 07 18:25:59 jowestdgx bash[134240]: ERROR 2025-12-07 23:25:59.780 on.py:59] Application startup failed. Exiting.
+Dec 07 18:25:59 jowestdgx bash[134240]: INFO 2025-12-07 23:25:59.781 http_api.py:170] HTTP Inference server has exited.
+
+=== DOCKER CONTAINERS ===
+CONTAINER ID   IMAGE                                                                   COMMAND                  CREATED              STATUS                        PORTS                                                             NAMES
+710a43902f28   nvcr.io/nim/qwen/qwen3-32b-dgx-spark:1.1.0-variant                      "/opt/nvidia/nvidia_…"   About a minute ago   Up About a minute             6006/tcp, 8888/tcp, 0.0.0.0:8001->8000/tcp, [::]:8001->8000/tcp   nim-qwen32b
+8583738a98a1   nvcr.io/nim/meta/llama-3.1-8b-instruct-dgx-spark:1.0.0-variant          "/opt/nvidia/nvidia_…"   6 minutes ago        Up 6 minutes                  6006/tcp, 8888/tcp, 0.0.0.0:8002->8000/tcp, [::]:8002->8000/tcp   nim-llama8b
+9d399ac60505   nvcr.io/nim/nvidia/nvidia-nemotron-nano-9b-v2-dgx-spark:1.0.0-variant   "/opt/nvidia/nvidia_…"   6 minutes ago        Up 6 minutes                  6006/tcp, 8888/tcp, 0.0.0.0:8003->8000/tcp, [::]:8003->8000/tcp   nim-nemotron9b
+1ac6deb082bf   nvcr.io/nim/qwen/qwen3-32b-dgx-spark:1.1.0-variant                      "/opt/nvidia/nvidia_…"   9 days ago           Exited (137) 44 minutes ago                                                                     nim-qwen32
+
+=== DOCKER LOGS (nim-nemotron9b) ===
+
+===========================================
+== NVIDIA Inference Microservice LLM NIM ==
+===========================================
+NVIDIA Inference Microservice LLM NIM GA 1.0.0
+Model: nvidia/nemotron-nano-9b-v2
+
+Container image Copyright (c) 2016-2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+The NIM container is governed by the NVIDIA Software License Agreement (found at https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-software-license-agreement/) and the Product-Specific Terms for NVIDIA AI Products (found at https://www.nvidia.com/en-us/agreements/enterprise-software/product-specific-terms-for-ai-products/); and the use of this model is governed by the NVIDIA Open Model License Agreement (found at https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-open-model-license/).
+
+INFO 2025-12-07 23:24:11.563 __init__.py:457] Appending: /opt/nim to PYTHONPATH: ['/usr/local/bin', '/usr/lib/python312.zip', '/usr/lib/python3.12', '/usr/lib/python3.12/lib-dynload', '/usr/local/lib/python3.12/dist-packages', '/usr/lib/python3/dist-packages']
+INFO 2025-12-07 23:24:11.563 check_cache_env.py:46] /opt/nim/.cache is present and is writable.
+
+INFO 2025-12-07 23:24:11.678 __init__.py:457] Appending: /opt/nim to PYTHONPATH: ['/usr/local/bin', '/usr/lib/python312.zip', '/usr/lib/python3.12', '/usr/lib/python3.12/lib-dynload', '/usr/local/lib/python3.12/dist-packages', '/usr/lib/python3/dist-packages']
+INFO 2025-12-07 23:24:12.391 start_server.py:58] Starting nimlib 0.11.12 nim_sdk 0.9.6
+INFO 2025-12-07 23:24:12.392 standard_files.py:95] NIM VERSION:
+1.0.0
+
+INFO 12-07 23:24:17 [__init__.py:216] Automatically detected platform cuda.
+INFO 2025-12-07 23:24:18.096 inference.py:72] Creating inference config
+INFO 2025-12-07 23:24:18.097 profiles.py:101] Registered custom profile selectors: []
+SYSTEM INFO
+- Free GPUs:
+  -  [2e12:10de] (0) NVIDIA GB10 [current utilization: N/A%]
+INFO 2025-12-07 23:24:18.111 profile_report.py:268] NIM_TAGS_SELECTOR environment variable is not set.
+SYSTEM INFO
+- Free GPUs:
+  -  [2e12:10de] (0) NVIDIA GB10 [current utilization: N/A%]
+INFO 2025-12-07 23:24:18.111 profile_report.py:268] NIM_TAGS_SELECTOR environment variable is not set.
+WARNING 2025-12-07 23:24:18.111 profile_memory.py:102] No model_family in profile f9db61d5a467d46be7733e90a26705798764b93d480c842143d525c1932b01e2
+INFO 2025-12-07 23:24:18.111 profiles.py:341] Matched profile_id in manifest from LLMBasedProfileSelector f9db61d5a467d46be7733e90a26705798764b93d480c842143d525c1932b01e2 with tags: {'feat_lora': 'false', 'llm_engine': 'vllm', 'nim_workspace_hash_v1': '1bc1fc30fed1c38789e3f288e06ed98a1c855a9c23ada6c501d0f732336b0121', 'pp': '1', 'precision': 'nvfp4', 'tp': '1'}
+INFO 2025-12-07 23:24:18.111 nim_sdk.py:313] Using the profile selected by the profile selector: f9db61d5a467d46be7733e90a26705798764b93d480c842143d525c1932b01e2
+INFO 2025-12-07 23:24:18.112 nim_sdk.py:326] Downloading manifest profile: f9db61d5a467d46be7733e90a26705798764b93d480c842143d525c1932b01e2
+INFO 2025-12-07 23:24:18.140 lib.rs:203] File: hf_quant_config.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/hf_quant_config.json"
+INFO 2025-12-07 23:24:18.140 public.rs:52] Skipping download, using cached copy of file: hf_quant_config.json at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/hf_quant_config.json"
+INFO 2025-12-07 23:24:18.153 lib.rs:203] File: model-00006-of-00010.safetensors found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00006-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.154 public.rs:52] Skipping download, using cached copy of file: model-00006-of-00010.safetensors at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00006-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.166 lib.rs:203] File: model-00010-of-00010.safetensors found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00010-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.166 public.rs:52] Skipping download, using cached copy of file: model-00010-of-00010.safetensors at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00010-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.178 lib.rs:203] File: model-00002-of-00010.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00002-of-00010.json"
+INFO 2025-12-07 23:24:18.178 public.rs:52] Skipping download, using cached copy of file: model-00002-of-00010.json at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00002-of-00010.json"
+INFO 2025-12-07 23:24:18.187 lib.rs:203] File: model-00004-of-00010.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00004-of-00010.json"
+INFO 2025-12-07 23:24:18.187 public.rs:52] Skipping download, using cached copy of file: model-00004-of-00010.json at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00004-of-00010.json"
+INFO 2025-12-07 23:24:18.194 lib.rs:203] File: model-00002-of-00010.safetensors found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00002-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.194 public.rs:52] Skipping download, using cached copy of file: model-00002-of-00010.safetensors at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00002-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.200 lib.rs:203] File: model-00007-of-00010.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00007-of-00010.json"
+INFO 2025-12-07 23:24:18.200 public.rs:52] Skipping download, using cached copy of file: model-00007-of-00010.json at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00007-of-00010.json"
+INFO 2025-12-07 23:24:18.206 lib.rs:203] File: model-00009-of-00010.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00009-of-00010.json"
+INFO 2025-12-07 23:24:18.206 public.rs:52] Skipping download, using cached copy of file: model-00009-of-00010.json at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00009-of-00010.json"
+INFO 2025-12-07 23:24:18.212 lib.rs:203] File: model-00001-of-00010.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00001-of-00010.json"
+INFO 2025-12-07 23:24:18.212 public.rs:52] Skipping download, using cached copy of file: model-00001-of-00010.json at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00001-of-00010.json"
+INFO 2025-12-07 23:24:18.217 lib.rs:203] File: model-00009-of-00010.safetensors found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00009-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.218 public.rs:52] Skipping download, using cached copy of file: model-00009-of-00010.safetensors at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00009-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.223 lib.rs:203] File: model.safetensors.index.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model.safetensors.index.json"
+INFO 2025-12-07 23:24:18.223 public.rs:52] Skipping download, using cached copy of file: model.safetensors.index.json at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model.safetensors.index.json"
+INFO 2025-12-07 23:24:18.229 lib.rs:203] File: config.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/config.json"
+INFO 2025-12-07 23:24:18.229 public.rs:52] Skipping download, using cached copy of file: config.json at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/config.json"
+INFO 2025-12-07 23:24:18.235 lib.rs:203] File: tokenizer_config.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/tokenizer_config.json"
+INFO 2025-12-07 23:24:18.235 public.rs:52] Skipping download, using cached copy of file: tokenizer_config.json at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/tokenizer_config.json"
+INFO 2025-12-07 23:24:18.241 lib.rs:203] File: special_tokens_map.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/special_tokens_map.json"
+INFO 2025-12-07 23:24:18.241 public.rs:52] Skipping download, using cached copy of file: special_tokens_map.json at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/special_tokens_map.json"
+INFO 2025-12-07 23:24:18.247 lib.rs:203] File: model-00007-of-00010.safetensors found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00007-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.247 public.rs:52] Skipping download, using cached copy of file: model-00007-of-00010.safetensors at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00007-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.253 lib.rs:203] File: tokenizer.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/tokenizer.json"
+INFO 2025-12-07 23:24:18.253 public.rs:52] Skipping download, using cached copy of file: tokenizer.json at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/tokenizer.json"
+INFO 2025-12-07 23:24:18.259 lib.rs:203] File: checksums.blake3 found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/checksums.blake3"
+INFO 2025-12-07 23:24:18.259 public.rs:52] Skipping download, using cached copy of file: checksums.blake3 at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/checksums.blake3"
+INFO 2025-12-07 23:24:18.265 lib.rs:203] File: model-00005-of-00010.safetensors found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00005-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.265 public.rs:52] Skipping download, using cached copy of file: model-00005-of-00010.safetensors at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00005-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.271 lib.rs:203] File: model-00006-of-00010.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00006-of-00010.json"
+INFO 2025-12-07 23:24:18.271 public.rs:52] Skipping download, using cached copy of file: model-00006-of-00010.json at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00006-of-00010.json"
+INFO 2025-12-07 23:24:18.277 lib.rs:203] File: model-00008-of-00010.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00008-of-00010.json"
+INFO 2025-12-07 23:24:18.277 public.rs:52] Skipping download, using cached copy of file: model-00008-of-00010.json at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00008-of-00010.json"
+INFO 2025-12-07 23:24:18.283 lib.rs:203] File: model-00008-of-00010.safetensors found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00008-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.283 public.rs:52] Skipping download, using cached copy of file: model-00008-of-00010.safetensors at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00008-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.289 lib.rs:203] File: generation_config.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/generation_config.json"
+INFO 2025-12-07 23:24:18.289 public.rs:52] Skipping download, using cached copy of file: generation_config.json at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/generation_config.json"
+INFO 2025-12-07 23:24:18.295 lib.rs:203] File: model-00003-of-00010.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00003-of-00010.json"
+INFO 2025-12-07 23:24:18.295 public.rs:52] Skipping download, using cached copy of file: model-00003-of-00010.json at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00003-of-00010.json"
+INFO 2025-12-07 23:24:18.301 lib.rs:203] File: model-00005-of-00010.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00005-of-00010.json"
+INFO 2025-12-07 23:24:18.301 public.rs:52] Skipping download, using cached copy of file: model-00005-of-00010.json at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00005-of-00010.json"
+INFO 2025-12-07 23:24:18.307 lib.rs:203] File: model-00010-of-00010.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00010-of-00010.json"
+INFO 2025-12-07 23:24:18.307 public.rs:52] Skipping download, using cached copy of file: model-00010-of-00010.json at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00010-of-00010.json"
+INFO 2025-12-07 23:24:18.313 lib.rs:203] File: model-00003-of-00010.safetensors found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00003-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.313 public.rs:52] Skipping download, using cached copy of file: model-00003-of-00010.safetensors at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00003-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.319 lib.rs:203] File: model-00001-of-00010.safetensors found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00001-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.319 public.rs:52] Skipping download, using cached copy of file: model-00001-of-00010.safetensors at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00001-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.325 lib.rs:203] File: model-00004-of-00010.safetensors found in cache: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00004-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.325 public.rs:52] Skipping download, using cached copy of file: model-00004-of-00010.safetensors at path: "/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/model-00004-of-00010.safetensors"
+INFO 2025-12-07 23:24:18.327 nim_sdk.py:346] Using the workspace specified during init: /opt/nim/workspace
+INFO 2025-12-07 23:24:18.327 nim_sdk.py:352] Creating workspace at /opt/nim/workspace
+INFO 2025-12-07 23:24:18.327 nim_sdk.py:359] Materializing workspace to: /opt/nim/workspace
+INFO 2025-12-07 23:24:19.280 nimutils.py:259] Starting NIM inference server
+INFO 2025-12-07 23:24:19.280 inference.py:445] Starting application
+WARN 2025-12-07 23:24:19.281 system.rs:194] Not supported error accessing attributes of Device with index: 0 error: the requested operation is not available on the target device
+INFO 2025-12-07 23:24:19.286 telemetry_handler.py:80] Telemetry mode TelemetryMode.OFF
+INFO 2025-12-07 23:24:19.332 inference.py:143] Interface initialized
+INFO 2025-12-07 23:24:19.332 inference.py:450] Starting server
+INFO 2025-12-07 23:24:19.332 http_api.py:111] Serving endpoints:
+  0.0.0.0:8000/v1/models (GET)
+  0.0.0.0:8000/v1/chat/completions (POST)
+  0.0.0.0:8000/v1/completions (POST)
+  0.0.0.0:8000/v1/health/ready (GET)
+  0.0.0.0:8000/v1/health/live (GET)
+  0.0.0.0:8000/v1/version (GET)
+  0.0.0.0:8000/v1/health/live (GET)
+  0.0.0.0:8000/v1/health/ready (GET)
+  0.0.0.0:8000/v1/metrics (GET)
+  0.0.0.0:8000/v1/license (GET)
+  0.0.0.0:8000/v1/metadata (GET)
+  0.0.0.0:8000/v1/manifest (GET)
+INFO 2025-12-07 23:24:19.332 http_api.py:135] {'message': 'Starting HTTP Inference server', 'port': 8000, 'workers_count': 1, 'host': '0.0.0.0', 'log_level': 'info', 'SSL': 'disabled'}
+INFO 2025-12-07 23:24:19.355 server.py:82] Started server process [83]
+INFO 2025-12-07 23:24:19.355 on.py:48] Waiting for application startup.
+INFO 2025-12-07 23:24:19.356 inference.py:149] Starting engine initialization with model: nvidia/nemotron-nano-9b-v2
+INFO 2025-12-07 23:24:19.428 vllm_backend.py:70] Initializing tokenizer
+INFO 2025-12-07 23:24:19.428 vllm_backend.py:77] Using tokenizer source: /opt/nim/workspace
+INFO 2025-12-07 23:24:19.748 vllm_backend.py:83] Tokenizer initialized successfully
+INFO 2025-12-07 23:24:19.748 vllm_backend.py:105] Using model source for engine: /opt/nim/workspace
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+A new version of the following files was downloaded from https://huggingface.co/nvidia/NVIDIA-Nemotron-Nano-9B-v2:
+- configuration_nemotron_h.py
+. Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.
+`torch_dtype` is deprecated! Use `dtype` instead!
+INFO 12-07 23:24:24 [__init__.py:742] Resolved architecture: NemotronHForCausalLM
+INFO 12-07 23:24:24 [__init__.py:1815] Using max model len 131072
+WARNING 12-07 23:24:25 [_ipex_ops.py:16] Import error msg: No module named 'intel_extension_for_pytorch'
+INFO 12-07 23:24:25 [scheduler.py:222] Chunked prefill is enabled with max_num_batched_tokens=2048.
+INFO 12-07 23:24:25 [config.py:310] Hybrid or mamba-based model detected: disabling prefix caching since it is not yet supported.
+INFO 12-07 23:24:25 [config.py:321] Hybrid or mamba-based model detected: setting cudagraph mode to FULL_AND_PIECEWISE in order to optimize performance.
+INFO 12-07 23:24:25 [config.py:390] Setting attention block size to 1312 tokens to ensure that attention page size is >= mamba page size.
+INFO 12-07 23:24:25 [config.py:411] Padding mamba page size by 1.08% to ensure that mamba page size and attention page size are exactly equal.
+WARNING 12-07 23:24:25 [modelopt.py:606] Detected ModelOpt NVFP4 checkpoint. Please note that the format is experimental and could change in future.
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:24:25 [core.py:654] Waiting for init message from front-end.
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:24:25 [core.py:76] Initializing a V1 LLM engine (v0.10.2+d8fcb151.nvmain) with config: model='/opt/nim/workspace', speculative_config=None, tokenizer='/opt/nim/workspace', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=True, dtype=torch.bfloat16, max_seq_len=131072, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, data_parallel_size=1, disable_custom_all_reduce=False, quantization=modelopt_fp4, enforce_eager=False, kv_cache_dtype=auto, device_config=cuda, decoding_config=DecodingConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_backend=''), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None), seed=0, served_model_name=/opt/nim/workspace, enable_prefix_caching=False, chunked_prefill_enabled=True, use_async_output_proc=True, pooler_config=None, compilation_config={"level":3,"debug_dump_path":"","cache_dir":"","backend":"","custom_ops":[],"splitting_ops":["vllm.unified_attention","vllm.unified_attention_with_output","vllm.mamba_mixer2","vllm.mamba_mixer","vllm.short_conv","vllm.linear_attention","vllm.plamo2_mamba_mixer","vllm.gdn_attention"],"use_inductor":true,"compile_sizes":[],"inductor_compile_config":{"enable_auto_functionalized_v2":false},"inductor_passes":{},"cudagraph_mode":[2,1],"use_cudagraph":true,"cudagraph_num_of_warmups":1,"cudagraph_capture_sizes":[8,4,2,1],"cudagraph_copy_inputs":false,"full_cuda_graph":false,"pass_config":{},"max_capture_size":8,"local_cache_dir":null}
+[W1207 23:24:26.886952040 ProcessGroupNCCL.cpp:936] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:24:26 [parallel_state.py:1165] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:24:27 [topk_topp_sampler.py:58] Using FlashInfer for top-p & top-k sampling.
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:24:27 [gpu_model_runner.py:2338] Starting to load model /opt/nim/workspace...
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:24:27 [gpu_model_runner.py:2370] Loading model from scratch...
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:24:27 [cuda.py:322] Using Flash Attention backend on V1 engine.
+[1;36m(EngineCore_DP0 pid=198)[0;0m Loading safetensors checkpoint shards:   0% Completed | 0/2 [00:00<?, ?it/s]
+[1;36m(EngineCore_DP0 pid=198)[0;0m Loading safetensors checkpoint shards:  50% Completed | 1/2 [00:21<00:21, 21.28s/it]
+[1;36m(EngineCore_DP0 pid=198)[0;0m Loading safetensors checkpoint shards: 100% Completed | 2/2 [00:44<00:00, 22.21s/it]
+[1;36m(EngineCore_DP0 pid=198)[0;0m Loading safetensors checkpoint shards: 100% Completed | 2/2 [00:44<00:00, 22.07s/it]
+[1;36m(EngineCore_DP0 pid=198)[0;0m 
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:25:11 [default_loader.py:268] Loading weights took 44.36 seconds
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:25:12 [gpu_model_runner.py:2392] Model loading took 7.3380 GiB and 44.853394 seconds
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:25:14 [backends.py:539] Using cache directory: /tmp/vllm/cache/torch_compile_cache/2ba4f62aae/rank_0_0/backbone for vLLM's torch.compile
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:25:14 [backends.py:550] Dynamo bytecode transform time: 2.15 s
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:25:15 [backends.py:194] Cache the graph for dynamic shape for later use
+[1;36m(EngineCore_DP0 pid=198)[0;0m [rank0]:W1207 23:25:15.508000 198 torch/_inductor/utils.py:1554] [0/0] Not enough SMs to use max_autotune_gemm mode
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:25:18 [backends.py:215] Compiling a graph for dynamic shape takes 4.03 s
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:25:50 [monitor.py:34] torch.compile takes 6.18 s in total
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:26:21 [gpu_worker.py:298] Available KV cache memory: 16.61 GiB
+[1;36m(EngineCore_DP0 pid=198)[0;0m WARNING 12-07 23:26:21 [kv_cache_utils.py:986] Add 1 padding layers, may waste at most 3.70% KV cache memory
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:26:21 [kv_cache_utils.py:1028] GPU KV cache size: 135,136 tokens
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:26:21 [kv_cache_utils.py:1032] Maximum concurrency for 131,072 tokens per request: 7.75x
+[1;36m(EngineCore_DP0 pid=198)[0;0m 2025-12-07 23:26:22,168 - INFO - autotuner.py:256 - flashinfer.jit: [Autotuner]: Autotuning process starts ...
+[1;36m(EngineCore_DP0 pid=198)[0;0m 2025-12-07 23:26:30,921 - INFO - autotuner.py:262 - flashinfer.jit: [Autotuner]: Autotuning process ends
+[1;36m(EngineCore_DP0 pid=198)[0;0m Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):   0%|          | 0/4 [00:00<?, ?it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  50%|█████     | 2/4 [00:00<00:00, 16.48it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE): 100%|██████████| 4/4 [00:00<00:00, 13.61it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE): 100%|██████████| 4/4 [00:00<00:00, 13.97it/s]
+[1;36m(EngineCore_DP0 pid=198)[0;0m Capturing CUDA graphs (decode, FULL):   0%|          | 0/4 [00:00<?, ?it/s]Capturing CUDA graphs (decode, FULL):  25%|██▌       | 1/4 [00:00<00:01,  1.59it/s]Capturing CUDA graphs (decode, FULL):  75%|███████▌  | 3/4 [00:00<00:00,  4.89it/s]Capturing CUDA graphs (decode, FULL): 100%|██████████| 4/4 [00:01<00:00,  3.47it/s]
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:26:32 [gpu_model_runner.py:3118] Graph capturing finished in 2 secs, took -0.09 GiB
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:26:32 [gpu_worker.py:391] Free memory on device (104.28/119.7 GiB) on startup. Desired GPU memory utilization is (0.15, 17.95 GiB). Actual usage is 7.34 GiB for weight, 1.13 GiB for peak activation, -7.12 GiB for non-torch memory, and -0.09 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=17772230246` to fit into requested memory, or `--kv-cache-memory=110460726272` to fully utilize gpu memory. Current kv cache memory in use is 17836697190 bytes.
+[1;36m(EngineCore_DP0 pid=198)[0;0m INFO 12-07 23:26:32 [core.py:218] init engine (profile, create kv cache, warmup model) took 80.48 seconds
+INFO 12-07 23:26:33 [loggers.py:142] Engine 000: vllm cache_config_info with initialization after num_gpu_blocks is: 829
+INFO 12-07 23:26:33 [async_llm.py:180] Torch profiler disabled. AsyncLLM CPU traces will not be collected.
+INFO 2025-12-07 23:26:33.367 vllm_backend.py:145] Initialized AsyncLLMEngine from /opt/nim/workspace
+INFO 2025-12-07 23:26:33.367 vllm_backend.py:148] Initializing model handler
+INFO 2025-12-07 23:26:33.368 vllm_backend.py:170] No model handler created for nvidia/nemotron-nano-9b-v2
+INFO 2025-12-07 23:26:33.368 vllm_backend.py:261] No chat template provided, attempting to use model's default template
+INFO 2025-12-07 23:26:33.368 vllm_backend.py:273] Attempting to get official chat template from model
+INFO 2025-12-07 23:26:33.369 vllm_backend.py:286] Successfully loaded chat template from model
+INFO 2025-12-07 23:26:33.369 vllm_backend.py:191] Starting warmup generation
+INFO 2025-12-07 23:26:58.570 vllm_backend.py:221] The server is up and ready to serve!
+INFO 2025-12-07 23:26:58.570 inference.py:152] Engine initialization complete
+INFO 12-07 23:26:58 [serving_chat.py:97] "auto" tool choice has been enabled please note that while the parallel_tool_calls client option is preset for compatibility reasons, it will be ignored.
+INFO 12-07 23:26:58 [serving_responses.py:159] "auto" tool choice has been enabled please note that while the parallel_tool_calls client option is preset for compatibility reasons, it will be ignored.
+INFO 2025-12-07 23:26:58.596 vllm_backend.py:827] Responses serving initialized for VLLM
+INFO 2025-12-07 23:26:58.596 vllm_backend.py:852] OpenAI serving implementation initialized for NIMType.LLM model
+INFO 2025-12-07 23:26:58.596 vllm_backend.py:856] Tool calling enabled with parser: nemotron_json
+INFO 2025-12-07 23:26:58.596 inference.py:156] Serving implementation initialized
+INFO 2025-12-07 23:26:58.596 inference.py:157] curl -X 'POST' \
+  'http://0.0.0.0:8000/v1/chat/completions' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "nvidia/nemotron-nano-9b-v2",
+    "messages": [
+      {
+        "role":"system",
+        "content":"detailed thinking on"
+      },
+      {
+        "role":"user",
+        "content":"Can you write me a song?"
+      }
+    ],
+    "top_p": 1,
+    "n": 1,
+    "max_tokens": 15,
+    "frequency_penalty": 1.0,
+    "stop": ["hello"]
+  }'
+
+INFO 2025-12-07 23:26:58.596 on.py:62] Application startup complete.
+INFO 2025-12-07 23:26:58.597 server.py:214] Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO 2025-12-07 23:27:17.080 httptools_impl.py:481] 192.168.88.247:56461 - "GET /v1/models HTTP/1.1" 200
+INFO 2025-12-07 23:27:17.234 httptools_impl.py:481] 192.168.88.247:56461 - "GET /favicon.ico HTTP/1.1" 404
+
+=== DOCKER LOGS (nim-llama8b) ===
+
+===========================================
+== NVIDIA Inference Microservice LLM NIM ==
+===========================================
+NVIDIA Inference Microservice LLM NIM GA
+Model: meta/llama-3.1-8b-instruct
+
+Container image Copyright (c) 2016-2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+INFO 2025-12-07 23:24:11.399 __init__.py:457] Appending: /opt/nim to PYTHONPATH: ['/usr/local/bin', '/usr/lib/python312.zip', '/usr/lib/python3.12', '/usr/lib/python3.12/lib-dynload', '/usr/local/lib/python3.12/dist-packages', '/usr/lib/python3/dist-packages']
+INFO 2025-12-07 23:24:11.400 check_cache_env.py:46] /opt/nim/.cache is present and is writable.
+
+INFO 2025-12-07 23:24:11.496 __init__.py:457] Appending: /opt/nim to PYTHONPATH: ['/usr/local/bin', '/usr/lib/python312.zip', '/usr/lib/python3.12', '/usr/lib/python3.12/lib-dynload', '/usr/local/lib/python3.12/dist-packages', '/usr/lib/python3/dist-packages']
+/usr/local/lib/python3.12/dist-packages/nimlib/hardware_inspect.py:26: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+INFO 2025-12-07 23:24:12.170 start_server.py:58] Starting nimlib 0.11.12 nim_sdk 0.9.6
+INFO 2025-12-07 23:24:12.170 standard_files.py:95] NIM VERSION:
+1.0.0
+INFO 2025-12-07 23:24:12.170 standard_files.py:95] NIM banner.txt:
+The NIM container is governed by the NVIDIA Software License Agreement (found at https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-software-license-agreement) and the Product Specific Terms for AI Products (found at https://www.nvidia.com/en-us/agreements/enterprise-software/product-specific-terms-for-ai-products).
+
+A copy of this license can be found under /opt/nim/LICENSE.
+
+The use of this model is governed by the NVIDIA Community Model License (found at https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-community-models-license/)
+
+ADDITIONAL INFORMATION: Llama 3.1 Community License Agreement, Built with Llama.
+INFO 2025-12-07 23:24:12.171 standard_files.py:95] NIM NOTICE:
+Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+LicenseRef-NvidiaProprietary
+
+
+NVIDIA CORPORATION, its affiliates and licensors retain all intellectual property and proprietary rights in and to this material, related documentation and any modifications thereto. Any use, reproduction, disclosure or distribution of this material and related documentation without an express license agreement from NVIDIA CORPORATION or its affiliates are strictly prohibited.
+
+
+Llama 3.1 is licensed under the Llama 3.1 Community License, Copyright (c) Meta Platforms, Inc. All Rights Reserved.
+
+INFO 12-07 23:24:16 [__init__.py:241] Automatically detected platform cuda.
+INFO 2025-12-07 23:24:17.098 inference.py:72] Creating inference config
+INFO 2025-12-07 23:24:17.098 profiles.py:105] Registered custom profile selectors: []
+SYSTEM INFO
+- Free GPUs:
+  -  [2e12:10de] (0) NVIDIA GB10 [current utilization: N/A%]
+INFO 2025-12-07 23:24:17.115 profile_report.py:268] NIM_TAGS_SELECTOR environment variable is not set.
+SYSTEM INFO
+- Free GPUs:
+  -  [2e12:10de] (0) NVIDIA GB10 [current utilization: N/A%]
+INFO 2025-12-07 23:24:17.116 profile_report.py:268] NIM_TAGS_SELECTOR environment variable is not set.
+WARNING 2025-12-07 23:24:17.116 profile_memory.py:102] No model_family in profile bfb2c8a2d4dceba7d2629c856113eb12f5ce60d6de4e10369b4b334242229cfa
+INFO 2025-12-07 23:24:17.116 profiles.py:345] Matched profile_id in manifest from LLMBasedProfileSelector bfb2c8a2d4dceba7d2629c856113eb12f5ce60d6de4e10369b4b334242229cfa with tags: {'feat_lora': 'false', 'gpu_device': '2e12:10de', 'llm_engine': 'vllm', 'nim_workspace_hash_v1': 'e8fd1d4848c7c3354b9a71c368608fd82e89e32a4b76493c25652b94722bce2d', 'pp': '1', 'precision': 'fp8', 'tp': '1'}
+INFO 2025-12-07 23:24:17.116 nim_sdk.py:313] Using the profile selected by the profile selector: bfb2c8a2d4dceba7d2629c856113eb12f5ce60d6de4e10369b4b334242229cfa
+INFO 2025-12-07 23:24:17.116 nim_sdk.py:326] Downloading manifest profile: bfb2c8a2d4dceba7d2629c856113eb12f5ce60d6de4e10369b4b334242229cfa
+INFO 2025-12-07 23:24:17.144 lib.rs:203] File: config.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/config.json"
+INFO 2025-12-07 23:24:17.144 public.rs:52] Skipping download, using cached copy of file: config.json at path: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/config.json"
+INFO 2025-12-07 23:24:17.157 lib.rs:203] File: model-00001-of-00002.safetensors found in cache: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/model-00001-of-00002.safetensors"
+INFO 2025-12-07 23:24:17.157 public.rs:52] Skipping download, using cached copy of file: model-00001-of-00002.safetensors at path: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/model-00001-of-00002.safetensors"
+INFO 2025-12-07 23:24:17.169 lib.rs:203] File: model.safetensors.index.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/model.safetensors.index.json"
+INFO 2025-12-07 23:24:17.169 public.rs:52] Skipping download, using cached copy of file: model.safetensors.index.json at path: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/model.safetensors.index.json"
+INFO 2025-12-07 23:24:17.182 lib.rs:203] File: model-00002-of-00002.safetensors found in cache: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/model-00002-of-00002.safetensors"
+INFO 2025-12-07 23:24:17.182 public.rs:52] Skipping download, using cached copy of file: model-00002-of-00002.safetensors at path: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/model-00002-of-00002.safetensors"
+INFO 2025-12-07 23:24:17.191 lib.rs:203] File: special_tokens_map.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/special_tokens_map.json"
+INFO 2025-12-07 23:24:17.191 public.rs:52] Skipping download, using cached copy of file: special_tokens_map.json at path: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/special_tokens_map.json"
+INFO 2025-12-07 23:24:17.197 lib.rs:203] File: tokenizer.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/tokenizer.json"
+INFO 2025-12-07 23:24:17.197 public.rs:52] Skipping download, using cached copy of file: tokenizer.json at path: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/tokenizer.json"
+INFO 2025-12-07 23:24:17.203 lib.rs:203] File: hf_quant_config.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/hf_quant_config.json"
+INFO 2025-12-07 23:24:17.203 public.rs:52] Skipping download, using cached copy of file: hf_quant_config.json at path: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/hf_quant_config.json"
+INFO 2025-12-07 23:24:17.209 lib.rs:203] File: LICENSE.pdf found in cache: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/LICENSE.pdf"
+INFO 2025-12-07 23:24:17.209 public.rs:52] Skipping download, using cached copy of file: LICENSE.pdf at path: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/LICENSE.pdf"
+INFO 2025-12-07 23:24:17.215 lib.rs:203] File: checksums.blake3 found in cache: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/checksums.blake3"
+INFO 2025-12-07 23:24:17.215 public.rs:52] Skipping download, using cached copy of file: checksums.blake3 at path: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/checksums.blake3"
+INFO 2025-12-07 23:24:17.221 lib.rs:203] File: generation_config.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/generation_config.json"
+INFO 2025-12-07 23:24:17.221 public.rs:52] Skipping download, using cached copy of file: generation_config.json at path: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/generation_config.json"
+INFO 2025-12-07 23:24:17.227 lib.rs:203] File: tokenizer_config.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/tokenizer_config.json"
+INFO 2025-12-07 23:24:17.227 public.rs:52] Skipping download, using cached copy of file: tokenizer_config.json at path: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/tokenizer_config.json"
+INFO 2025-12-07 23:24:17.233 lib.rs:203] File: README.md found in cache: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/README.md"
+INFO 2025-12-07 23:24:17.233 public.rs:52] Skipping download, using cached copy of file: README.md at path: "/opt/nim/.cache/ngc/hub/models--nim--meta--llama-3.1-8b-instruct-dgx-spark/snapshots/hf-fp8-42d9515+chk1/README.md"
+INFO 2025-12-07 23:24:17.233 nim_sdk.py:346] Using the workspace specified during init: /opt/nim/workspace
+INFO 2025-12-07 23:24:17.234 nim_sdk.py:352] Creating workspace at /opt/nim/workspace
+INFO 2025-12-07 23:24:17.234 nim_sdk.py:359] Materializing workspace to: /opt/nim/workspace
+INFO 2025-12-07 23:24:18.152 nimutils.py:259] Starting NIM inference server
+INFO 2025-12-07 23:24:18.152 inference.py:425] Starting application
+WARN 2025-12-07 23:24:18.152 system.rs:194] Not supported error accessing attributes of Device with index: 0 error: the requested operation is not available on the target device
+INFO 2025-12-07 23:24:18.158 telemetry_handler.py:80] Telemetry mode TelemetryMode.OFF
+INFO 2025-12-07 23:24:18.199 inference.py:138] Interface initialized
+INFO 2025-12-07 23:24:18.199 inference.py:430] Starting server
+INFO 2025-12-07 23:24:18.199 http_api.py:110] Serving endpoints:
+  0.0.0.0:8000/v1/models (GET)
+  0.0.0.0:8000/v1/chat/completions (POST)
+  0.0.0.0:8000/v1/completions (POST)
+  0.0.0.0:8000/v1/health/ready (GET)
+  0.0.0.0:8000/v1/health/live (GET)
+  0.0.0.0:8000/v1/version (GET)
+  0.0.0.0:8000/v1/health/live (GET)
+  0.0.0.0:8000/v1/health/ready (GET)
+  0.0.0.0:8000/v1/metrics (GET)
+  0.0.0.0:8000/v1/license (GET)
+  0.0.0.0:8000/v1/metadata (GET)
+  0.0.0.0:8000/v1/manifest (GET)
+INFO 2025-12-07 23:24:18.199 http_api.py:134] {'message': 'Starting HTTP Inference server', 'port': 8000, 'workers_count': 1, 'host': '0.0.0.0', 'log_level': 'info', 'SSL': 'disabled'}
+INFO 2025-12-07 23:24:18.226 server.py:82] Started server process [78]
+INFO 2025-12-07 23:24:18.226 on.py:48] Waiting for application startup.
+INFO 2025-12-07 23:24:18.226 inference.py:144] Starting engine initialization with model: meta/llama-3.1-8b-instruct
+INFO 2025-12-07 23:24:18.289 vllm_backend.py:71] Initializing tokenizer
+INFO 2025-12-07 23:24:18.289 vllm_backend.py:78] Using tokenizer source: /opt/nim/workspace
+INFO 2025-12-07 23:24:18.496 vllm_backend.py:84] Tokenizer initialized successfully
+INFO 2025-12-07 23:24:18.496 vllm_backend.py:106] Using model source for engine: /opt/nim/workspace
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+INFO 12-07 23:24:22 [__init__.py:711] Resolved architecture: LlamaForCausalLM
+INFO 12-07 23:24:22 [__init__.py:1750] Using max model len 8192
+WARNING 12-07 23:24:23 [arg_utils.py:1775] Detected VLLM_USE_V1=1 with Engine in background thread. Usage should be considered experimental. Please report any issues on Github.
+INFO 12-07 23:24:23 [scheduler.py:222] Chunked prefill is enabled with max_num_batched_tokens=2048.
+WARNING 12-07 23:24:23 [modelopt.py:71] Detected ModelOpt fp8 checkpoint. Please note that the format is experimental and could change.
+[1;36m(EngineCore_0 pid=193)[0;0m INFO 12-07 23:24:24 [core.py:636] Waiting for init message from front-end.
+[1;36m(EngineCore_0 pid=193)[0;0m INFO 12-07 23:24:24 [core.py:74] Initializing a V1 LLM engine (v0.10.1.1+381074ae.nv25.09) with config: model='/opt/nim/workspace', speculative_config=None, tokenizer='/opt/nim/workspace', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config={}, tokenizer_revision=None, trust_remote_code=True, dtype=torch.bfloat16, max_seq_len=8192, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=modelopt, enforce_eager=False, kv_cache_dtype=auto, device_config=cuda, decoding_config=DecodingConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_backend=''), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None), seed=0, served_model_name=/opt/nim/workspace, enable_prefix_caching=True, chunked_prefill_enabled=True, use_async_output_proc=True, pooler_config=None, compilation_config={"level":3,"debug_dump_path":"","cache_dir":"","backend":"","custom_ops":[],"splitting_ops":["vllm.unified_attention","vllm.unified_attention_with_output","vllm.mamba_mixer2"],"use_inductor":true,"compile_sizes":[],"inductor_compile_config":{"enable_auto_functionalized_v2":false},"inductor_passes":{},"cudagraph_mode":1,"use_cudagraph":true,"cudagraph_num_of_warmups":1,"cudagraph_capture_sizes":[8,4,2,1],"cudagraph_copy_inputs":false,"full_cuda_graph":false,"pass_config":{},"max_capture_size":8,"local_cache_dir":null}
+[W1207 23:24:25.207276538 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[1;36m(EngineCore_0 pid=193)[0;0m INFO 12-07 23:24:25 [parallel_state.py:1134] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0
+[1;36m(EngineCore_0 pid=193)[0;0m INFO 12-07 23:24:25 [topk_topp_sampler.py:50] Using FlashInfer for top-p & top-k sampling.
+[1;36m(EngineCore_0 pid=193)[0;0m INFO 12-07 23:24:25 [gpu_model_runner.py:1953] Starting to load model /opt/nim/workspace...
+[1;36m(EngineCore_0 pid=193)[0;0m INFO 12-07 23:24:25 [gpu_model_runner.py:1985] Loading model from scratch...
+[1;36m(EngineCore_0 pid=193)[0;0m INFO 12-07 23:24:25 [cuda.py:328] Using Flash Attention backend on V1 engine.
+[1;36m(EngineCore_0 pid=193)[0;0m Loading safetensors checkpoint shards:   0% Completed | 0/2 [00:00<?, ?it/s]
+[1;36m(EngineCore_0 pid=193)[0;0m Loading safetensors checkpoint shards:  50% Completed | 1/2 [00:24<00:24, 24.42s/it]
+[1;36m(EngineCore_0 pid=193)[0;0m Loading safetensors checkpoint shards: 100% Completed | 2/2 [00:53<00:00, 27.20s/it]
+[1;36m(EngineCore_0 pid=193)[0;0m Loading safetensors checkpoint shards: 100% Completed | 2/2 [00:53<00:00, 26.78s/it]
+[1;36m(EngineCore_0 pid=193)[0;0m 
+[1;36m(EngineCore_0 pid=193)[0;0m INFO 12-07 23:25:19 [default_loader.py:262] Loading weights took 53.82 seconds
+[1;36m(EngineCore_0 pid=193)[0;0m INFO 12-07 23:25:20 [gpu_model_runner.py:2007] Model loading took 8.4890 GiB and 54.733318 seconds
+[1;36m(EngineCore_0 pid=193)[0;0m INFO 12-07 23:25:25 [backends.py:548] Using cache directory: /tmp/vllm/cache/torch_compile_cache/6dbf84b8ba/rank_0_0/backbone for vLLM's torch.compile
+[1;36m(EngineCore_0 pid=193)[0;0m INFO 12-07 23:25:25 [backends.py:559] Dynamo bytecode transform time: 4.46 s
+[1;36m(EngineCore_0 pid=193)[0;0m INFO 12-07 23:25:27 [backends.py:194] Cache the graph for dynamic shape for later use
+[1;36m(EngineCore_0 pid=193)[0;0m INFO 12-07 23:25:31 [backends.py:215] Compiling a graph for dynamic shape takes 6.08 s
+[1;36m(EngineCore_0 pid=193)[0;0m INFO 12-07 23:25:33 [monitor.py:34] torch.compile takes 10.55 s in total
+[1;36m(EngineCore_0 pid=193)[0;0m INFO 12-07 23:25:59 [gpu_worker.py:276] Available KV cache memory: -6.24 GiB
+[1;36m(EngineCore_0 pid=193)[0;0m Process EngineCore_0:
+[1;36m(EngineCore_0 pid=193)[0;0m ERROR 12-07 23:25:59 [core.py:700] EngineCore failed to start.
+[1;36m(EngineCore_0 pid=193)[0;0m ERROR 12-07 23:25:59 [core.py:700] Traceback (most recent call last):
+[1;36m(EngineCore_0 pid=193)[0;0m ERROR 12-07 23:25:59 [core.py:700]   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py", line 691, in run_engine_core
+[1;36m(EngineCore_0 pid=193)[0;0m ERROR 12-07 23:25:59 [core.py:700]     engine_core = EngineCoreProc(*args, **kwargs)
+[1;36m(EngineCore_0 pid=193)[0;0m ERROR 12-07 23:25:59 [core.py:700]                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[1;36m(EngineCore_0 pid=193)[0;0m ERROR 12-07 23:25:59 [core.py:700]   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py", line 492, in __init__
+[1;36m(EngineCore_0 pid=193)[0;0m ERROR 12-07 23:25:59 [core.py:700]     super().__init__(vllm_config, executor_class, log_stats,
+[1;36m(EngineCore_0 pid=193)[0;0m ERROR 12-07 23:25:59 [core.py:700]   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py", line 89, in __init__
+[1;36m(EngineCore_0 pid=193)[0;0m ERROR 12-07 23:25:59 [core.py:700]     self._initialize_kv_caches(vllm_config)
+[1;36m(EngineCore_0 pid=193)[0;0m ERROR 12-07 23:25:59 [core.py:700]   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py", line 189, in _initialize_kv_caches
+[1;36m(EngineCore_0 pid=193)[0;0m ERROR 12-07 23:25:59 [core.py:700]     get_kv_cache_config(vllm_config, kv_cache_spec_one_worker,
+[1;36m(EngineCore_0 pid=193)[0;0m ERROR 12-07 23:25:59 [core.py:700]   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/core/kv_cache_utils.py", line 1095, in get_kv_cache_config
+[1;36m(EngineCore_0 pid=193)[0;0m ERROR 12-07 23:25:59 [core.py:700]     check_enough_kv_cache_memory(vllm_config, kv_cache_spec, available_memory)
+[1;36m(EngineCore_0 pid=193)[0;0m ERROR 12-07 23:25:59 [core.py:700]   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/core/kv_cache_utils.py", line 682, in check_enough_kv_cache_memory
+[1;36m(EngineCore_0 pid=193)[0;0m ERROR 12-07 23:25:59 [core.py:700]     raise ValueError("No available memory for the cache blocks. "
+[1;36m(EngineCore_0 pid=193)[0;0m ERROR 12-07 23:25:59 [core.py:700] ValueError: No available memory for the cache blocks. Try increasing `gpu_memory_utilization` when initializing the engine.
+[1;36m(EngineCore_0 pid=193)[0;0m Traceback (most recent call last):
+[1;36m(EngineCore_0 pid=193)[0;0m   File "/usr/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+[1;36m(EngineCore_0 pid=193)[0;0m     self.run()
+[1;36m(EngineCore_0 pid=193)[0;0m   File "/usr/lib/python3.12/multiprocessing/process.py", line 108, in run
+[1;36m(EngineCore_0 pid=193)[0;0m     self._target(*self._args, **self._kwargs)
+[1;36m(EngineCore_0 pid=193)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py", line 704, in run_engine_core
+[1;36m(EngineCore_0 pid=193)[0;0m     raise e
+[1;36m(EngineCore_0 pid=193)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py", line 691, in run_engine_core
+[1;36m(EngineCore_0 pid=193)[0;0m     engine_core = EngineCoreProc(*args, **kwargs)
+[1;36m(EngineCore_0 pid=193)[0;0m                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[1;36m(EngineCore_0 pid=193)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py", line 492, in __init__
+[1;36m(EngineCore_0 pid=193)[0;0m     super().__init__(vllm_config, executor_class, log_stats,
+[1;36m(EngineCore_0 pid=193)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py", line 89, in __init__
+[1;36m(EngineCore_0 pid=193)[0;0m     self._initialize_kv_caches(vllm_config)
+[1;36m(EngineCore_0 pid=193)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py", line 189, in _initialize_kv_caches
+[1;36m(EngineCore_0 pid=193)[0;0m     get_kv_cache_config(vllm_config, kv_cache_spec_one_worker,
+[1;36m(EngineCore_0 pid=193)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/core/kv_cache_utils.py", line 1095, in get_kv_cache_config
+[1;36m(EngineCore_0 pid=193)[0;0m     check_enough_kv_cache_memory(vllm_config, kv_cache_spec, available_memory)
+[1;36m(EngineCore_0 pid=193)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/core/kv_cache_utils.py", line 682, in check_enough_kv_cache_memory
+[1;36m(EngineCore_0 pid=193)[0;0m     raise ValueError("No available memory for the cache blocks. "
+[1;36m(EngineCore_0 pid=193)[0;0m ValueError: No available memory for the cache blocks. Try increasing `gpu_memory_utilization` when initializing the engine.
+ERROR 2025-12-07 23:25:59.762 vllm_backend.py:239] Initialization error: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+ERROR 2025-12-07 23:25:59.762 vllm_backend.py:240] Error type: <class 'RuntimeError'>
+ERROR 2025-12-07 23:25:59.776 vllm_backend.py:243] Full traceback: Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/dist-packages/nim_inference_sdk/backends/vllm_backend.py", line 141, in initialize
+    self.engine = AsyncLLMEngine.from_engine_args(engine_args)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/vllm/engine/async_llm_engine.py", line 579, in from_engine_args
+    return async_engine_cls.from_vllm_config(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/vllm/utils/__init__.py", line 1557, in inner
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/async_llm.py", line 174, in from_vllm_config
+    return cls(
+           ^^^^
+  File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/async_llm.py", line 120, in __init__
+    self.engine_core = EngineCoreClient.make_async_mp_client(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core_client.py", line 102, in make_async_mp_client
+    return AsyncMPClient(*client_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core_client.py", line 767, in __init__
+    super().__init__(
+  File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core_client.py", line 446, in __init__
+    with launch_core_engines(vllm_config, executor_class,
+  File "/usr/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/utils.py", line 706, in launch_core_engines
+    wait_for_engine_startup(
+  File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/utils.py", line 759, in wait_for_engine_startup
+    raise RuntimeError("Engine core initialization failed. "
+RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+
+ERROR 2025-12-07 23:25:59.776 inference.py:160] Error during engine lifecycle: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+ERROR 2025-12-07 23:25:59.779 on.py:121] Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/dist-packages/starlette/routing.py", line 694, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+  File "/usr/lib/python3.12/contextlib.py", line 210, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/nimlib/nim_inference_api_builder/api.py", line 100, in wrapper
+    async with lifespan_func():
+  File "/usr/lib/python3.12/contextlib.py", line 210, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/nim/inference.py", line 146, in lifespan
+    await self.engine.initialize()  # Properly await the async initialization
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/nim_inference_sdk/inference_engine.py", line 87, in initialize
+    await self.backend.initialize()
+  File "/usr/local/lib/python3.12/dist-packages/nim_inference_sdk/backends/vllm_backend.py", line 141, in initialize
+    self.engine = AsyncLLMEngine.from_engine_args(engine_args)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/vllm/engine/async_llm_engine.py", line 579, in from_engine_args
+    return async_engine_cls.from_vllm_config(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/vllm/utils/__init__.py", line 1557, in inner
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/async_llm.py", line 174, in from_vllm_config
+    return cls(
+           ^^^^
+  File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/async_llm.py", line 120, in __init__
+    self.engine_core = EngineCoreClient.make_async_mp_client(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core_client.py", line 102, in make_async_mp_client
+    return AsyncMPClient(*client_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core_client.py", line 767, in __init__
+    super().__init__(
+  File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core_client.py", line 446, in __init__
+    with launch_core_engines(vllm_config, executor_class,
+  File "/usr/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/utils.py", line 706, in launch_core_engines
+    wait_for_engine_startup(
+  File "/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/utils.py", line 759, in wait_for_engine_startup
+    raise RuntimeError("Engine core initialization failed. "
+RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+
+ERROR 2025-12-07 23:25:59.780 on.py:59] Application startup failed. Exiting.
+INFO 2025-12-07 23:25:59.781 http_api.py:170] HTTP Inference server has exited.
+
+=== JOURNALCTL (Last 100 lines) ===
+Dec 07 18:28:43 jowestdgx bash[137292]: A copy of this license can be found under /opt/nim/LICENSE.
+Dec 07 18:28:43 jowestdgx bash[137292]: The use of this model is governed by the AI Foundation Models Community License
+Dec 07 18:28:43 jowestdgx bash[137292]: here: https://docs.nvidia.com/ai-foundation-models-community-license.pdf.
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 12-07 23:28:46 [__init__.py:241] Automatically detected platform cuda.
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.859 inference.py:79] Creating inference config
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.859 profiles.py:105] Registered custom profile selectors: []
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.860 profiles.py:216] Matched profile_id in manifest from env NIM_MODEL_PROFILE to: c4f105d92c72ab56200884dfacde9d2128b139755c06b9c883eeb3e287b7408a
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.860 nim_sdk.py:313] Using the profile selected by the profile selector: c4f105d92c72ab56200884dfacde9d2128b139755c06b9c883eeb3e287b7408a
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.860 nim_sdk.py:326] Downloading manifest profile: c4f105d92c72ab56200884dfacde9d2128b139755c06b9c883eeb3e287b7408a
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.889 lib.rs:203] File: model-00003-of-00005.safetensors found in cache: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/model-00003-of-00005.safetensors"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.889 public.rs:52] Skipping download, using cached copy of file: model-00003-of-00005.safetensors at path: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/model-00003-of-00005.safetensors"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.903 lib.rs:203] File: tokenizer_config.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/tokenizer_config.json"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.903 public.rs:52] Skipping download, using cached copy of file: tokenizer_config.json at path: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/tokenizer_config.json"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.915 lib.rs:203] File: model-00005-of-00005.safetensors found in cache: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/model-00005-of-00005.safetensors"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.915 public.rs:52] Skipping download, using cached copy of file: model-00005-of-00005.safetensors at path: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/model-00005-of-00005.safetensors"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.927 lib.rs:203] File: model-00001-of-00005.safetensors found in cache: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/model-00001-of-00005.safetensors"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.927 public.rs:52] Skipping download, using cached copy of file: model-00001-of-00005.safetensors at path: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/model-00001-of-00005.safetensors"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.935 lib.rs:203] File: model-00004-of-00005.safetensors found in cache: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/model-00004-of-00005.safetensors"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.935 public.rs:52] Skipping download, using cached copy of file: model-00004-of-00005.safetensors at path: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/model-00004-of-00005.safetensors"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.942 lib.rs:203] File: model-00002-of-00005.safetensors found in cache: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/model-00002-of-00005.safetensors"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.942 public.rs:52] Skipping download, using cached copy of file: model-00002-of-00005.safetensors at path: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/model-00002-of-00005.safetensors"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.948 lib.rs:203] File: tokenizer.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/tokenizer.json"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.948 public.rs:52] Skipping download, using cached copy of file: tokenizer.json at path: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/tokenizer.json"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.953 lib.rs:203] File: checksums.blake3 found in cache: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/checksums.blake3"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.954 public.rs:52] Skipping download, using cached copy of file: checksums.blake3 at path: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/checksums.blake3"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.959 lib.rs:203] File: special_tokens_map.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/special_tokens_map.json"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.959 public.rs:52] Skipping download, using cached copy of file: special_tokens_map.json at path: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/special_tokens_map.json"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.965 lib.rs:203] File: config.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/config.json"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.965 public.rs:52] Skipping download, using cached copy of file: config.json at path: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/config.json"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.971 lib.rs:203] File: added_tokens.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/added_tokens.json"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.971 public.rs:52] Skipping download, using cached copy of file: added_tokens.json at path: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/added_tokens.json"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.977 lib.rs:203] File: chat_template.jinja found in cache: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/chat_template.jinja"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.977 public.rs:52] Skipping download, using cached copy of file: chat_template.jinja at path: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/chat_template.jinja"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.983 lib.rs:203] File: merges.txt found in cache: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/merges.txt"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.983 public.rs:52] Skipping download, using cached copy of file: merges.txt at path: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/merges.txt"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.989 lib.rs:203] File: vocab.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/vocab.json"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.989 public.rs:52] Skipping download, using cached copy of file: vocab.json at path: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/vocab.json"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.995 lib.rs:203] File: generation_config.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/generation_config.json"
+Dec 07 18:28:46 jowestdgx bash[137292]: INFO 2025-12-07 23:28:46.995 public.rs:52] Skipping download, using cached copy of file: generation_config.json at path: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/generation_config.json"
+Dec 07 18:28:47 jowestdgx bash[137292]: INFO 2025-12-07 23:28:47.001 lib.rs:203] File: model.safetensors.index.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/model.safetensors.index.json"
+Dec 07 18:28:47 jowestdgx bash[137292]: INFO 2025-12-07 23:28:47.001 public.rs:52] Skipping download, using cached copy of file: model.safetensors.index.json at path: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/model.safetensors.index.json"
+Dec 07 18:28:47 jowestdgx bash[137292]: INFO 2025-12-07 23:28:47.007 lib.rs:203] File: hf_quant_config.json found in cache: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/hf_quant_config.json"
+Dec 07 18:28:47 jowestdgx bash[137292]: INFO 2025-12-07 23:28:47.007 public.rs:52] Skipping download, using cached copy of file: hf_quant_config.json at path: "/opt/nim/.cache/ngc/hub/models--nim--qwen--qwen3-32b-instruct/snapshots/modelopt-nim-nvfp4/hf_quant_config.json"
+Dec 07 18:28:47 jowestdgx bash[137292]: INFO 2025-12-07 23:28:47.018 nim_sdk.py:346] Using the workspace specified during init: /opt/nim/workspace
+Dec 07 18:28:47 jowestdgx bash[137292]: INFO 2025-12-07 23:28:47.018 nim_sdk.py:352] Creating workspace at /opt/nim/workspace
+Dec 07 18:28:47 jowestdgx bash[137292]: INFO 2025-12-07 23:28:47.019 nim_sdk.py:359] Materializing workspace to: /opt/nim/workspace
+Dec 07 18:28:49 jowestdgx bash[137292]: INFO 2025-12-07 23:28:49.588 nimutils.py:259] Starting NIM inference server
+Dec 07 18:28:49 jowestdgx bash[137292]: INFO 2025-12-07 23:28:49.588 inference.py:426] Starting application
+Dec 07 18:28:49 jowestdgx bash[137292]: WARN 2025-12-07 23:28:49.589 system.rs:194] Not supported error accessing attributes of Device with index: 0 error: the requested operation is not available on the target device
+Dec 07 18:28:49 jowestdgx bash[137292]: INFO 2025-12-07 23:28:49.594 telemetry_handler.py:80] Telemetry mode TelemetryMode.OFF
+Dec 07 18:28:49 jowestdgx bash[137292]: INFO 2025-12-07 23:28:49.640 inference.py:150] Interface initialized
+Dec 07 18:28:49 jowestdgx bash[137292]: INFO 2025-12-07 23:28:49.640 inference.py:431] Starting server
+Dec 07 18:28:49 jowestdgx bash[137292]: INFO 2025-12-07 23:28:49.640 http_api.py:110] Serving endpoints:
+Dec 07 18:28:49 jowestdgx bash[137292]:   0.0.0.0:8000/v1/models (GET)
+Dec 07 18:28:49 jowestdgx bash[137292]:   0.0.0.0:8000/v1/chat/completions (POST)
+Dec 07 18:28:49 jowestdgx bash[137292]:   0.0.0.0:8000/v1/completions (POST)
+Dec 07 18:28:49 jowestdgx bash[137292]:   0.0.0.0:8000/v1/health/ready (GET)
+Dec 07 18:28:49 jowestdgx bash[137292]:   0.0.0.0:8000/v1/health/live (GET)
+Dec 07 18:28:49 jowestdgx bash[137292]:   0.0.0.0:8000/v1/version (GET)
+Dec 07 18:28:49 jowestdgx bash[137292]:   0.0.0.0:8000/v1/health/live (GET)
+Dec 07 18:28:49 jowestdgx bash[137292]:   0.0.0.0:8000/v1/health/ready (GET)
+Dec 07 18:28:49 jowestdgx bash[137292]:   0.0.0.0:8000/v1/metrics (GET)
+Dec 07 18:28:49 jowestdgx bash[137292]:   0.0.0.0:8000/v1/license (GET)
+Dec 07 18:28:49 jowestdgx bash[137292]:   0.0.0.0:8000/v1/metadata (GET)
+Dec 07 18:28:49 jowestdgx bash[137292]:   0.0.0.0:8000/v1/manifest (GET)
+Dec 07 18:28:49 jowestdgx bash[137292]: INFO 2025-12-07 23:28:49.640 http_api.py:134] {'message': 'Starting HTTP Inference server', 'port': 8000, 'workers_count': 1, 'host': '0.0.0.0', 'log_level': 'info', 'SSL': 'disabled'}
+Dec 07 18:28:49 jowestdgx bash[137292]: INFO 2025-12-07 23:28:49.680 server.py:82] Started server process [80]
+Dec 07 18:28:49 jowestdgx bash[137292]: INFO 2025-12-07 23:28:49.680 on.py:48] Waiting for application startup.
+Dec 07 18:28:49 jowestdgx bash[137292]: INFO 2025-12-07 23:28:49.681 inference.py:156] Starting engine initialization with model: Qwen/Qwen3-32B
+Dec 07 18:28:49 jowestdgx bash[137292]: INFO 2025-12-07 23:28:49.760 vllm_backend.py:71] Initializing tokenizer
+Dec 07 18:28:49 jowestdgx bash[137292]: INFO 2025-12-07 23:28:49.760 vllm_backend.py:78] Using tokenizer source: /opt/nim/workspace
+Dec 07 18:28:49 jowestdgx bash[137292]: INFO 2025-12-07 23:28:49.987 vllm_backend.py:84] Tokenizer initialized successfully
+Dec 07 18:28:49 jowestdgx bash[137292]: INFO 2025-12-07 23:28:49.987 vllm_backend.py:106] Using model source for engine: /opt/nim/workspace
+Dec 07 18:28:50 jowestdgx bash[137292]: The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+Dec 07 18:28:54 jowestdgx bash[137292]: INFO 12-07 23:28:54 [__init__.py:711] Resolved architecture: Qwen3ForCausalLM
+Dec 07 18:28:54 jowestdgx bash[137292]: INFO 12-07 23:28:54 [__init__.py:1750] Using max model len 8192
+Dec 07 18:28:55 jowestdgx bash[137292]: WARNING 12-07 23:28:55 [arg_utils.py:1775] Detected VLLM_USE_V1=1 with Engine in background thread. Usage should be considered experimental. Please report any issues on Github.
+Dec 07 18:28:55 jowestdgx bash[137292]: INFO 12-07 23:28:55 [scheduler.py:222] Chunked prefill is enabled with max_num_batched_tokens=2048.
+Dec 07 18:28:55 jowestdgx bash[137292]: WARNING 12-07 23:28:55 [modelopt.py:533] Detected ModelOpt NVFP4 checkpoint. Please note that the format is experimental and could change in future.
+Dec 07 18:28:56 jowestdgx bash[137292]: WARNING 12-07 23:28:56 [__init__.py:2935] We must use the `spawn` multiprocessing start method. Overriding VLLM_WORKER_MULTIPROC_METHOD to 'spawn'. See https://docs.vllm.ai/en/latest/usage/troubleshooting.html#python-multiprocessing for more information. Reasons: CUDA is initialized
+Dec 07 18:28:56 jowestdgx bash[137292]: /usr/local/lib/python3.12/dist-packages/nimlib/hardware_inspect.py:20: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+Dec 07 18:28:56 jowestdgx bash[137292]:   import pynvml
+Dec 07 18:28:58 jowestdgx bash[137292]: INFO 12-07 23:28:58 [__init__.py:241] Automatically detected platform cuda.
+Dec 07 18:29:00 jowestdgx bash[137292]: (EngineCore_0 pid=196) INFO 12-07 23:29:00 [core.py:636] Waiting for init message from front-end.
+Dec 07 18:29:00 jowestdgx bash[137292]: (EngineCore_0 pid=196) INFO 12-07 23:29:00 [core.py:74] Initializing a V1 LLM engine (v0.10.1.1+381074ae.nv25.09) with config: model='/opt/nim/workspace', speculative_config=None, tokenizer='/opt/nim/workspace', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config={}, tokenizer_revision=None, trust_remote_code=True, dtype=torch.bfloat16, max_seq_len=8192, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=modelopt_fp4, enforce_eager=False, kv_cache_dtype=auto, device_config=cuda, decoding_config=DecodingConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_backend='qwen3'), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None), seed=0, served_model_name=/opt/nim/workspace, enable_prefix_caching=True, chunked_prefill_enabled=True, use_async_output_proc=True, pooler_config=None, compilation_config={"level":3,"debug_dump_path":"","cache_dir":"","backend":"","custom_ops":[],"splitting_ops":["vllm.unified_attention","vllm.unified_attention_with_output","vllm.mamba_mixer2"],"use_inductor":true,"compile_sizes":[],"inductor_compile_config":{"enable_auto_functionalized_v2":false},"inductor_passes":{},"cudagraph_mode":1,"use_cudagraph":true,"cudagraph_num_of_warmups":1,"cudagraph_capture_sizes":[8,4,2,1],"cudagraph_copy_inputs":false,"full_cuda_graph":false,"pass_config":{},"max_capture_size":8,"local_cache_dir":null}
+Dec 07 18:29:00 jowestdgx bash[137292]: [W1207 23:29:00.808182077 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+Dec 07 18:29:00 jowestdgx bash[137292]: [Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+Dec 07 18:29:00 jowestdgx bash[137292]: [Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+Dec 07 18:29:00 jowestdgx bash[137292]: [Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+Dec 07 18:29:00 jowestdgx bash[137292]: [Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+Dec 07 18:29:00 jowestdgx bash[137292]: [Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+Dec 07 18:29:00 jowestdgx bash[137292]: (EngineCore_0 pid=196) INFO 12-07 23:29:00 [parallel_state.py:1134] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0
+Dec 07 18:29:00 jowestdgx bash[137292]: (EngineCore_0 pid=196) INFO 12-07 23:29:00 [topk_topp_sampler.py:50] Using FlashInfer for top-p & top-k sampling.
+Dec 07 18:29:00 jowestdgx bash[137292]: (EngineCore_0 pid=196) INFO 12-07 23:29:00 [gpu_model_runner.py:1953] Starting to load model /opt/nim/workspace...
+Dec 07 18:29:01 jowestdgx bash[137292]: (EngineCore_0 pid=196) INFO 12-07 23:29:01 [gpu_model_runner.py:1985] Loading model from scratch...
+Dec 07 18:29:01 jowestdgx bash[137292]: (EngineCore_0 pid=196) INFO 12-07 23:29:01 [cuda.py:328] Using Flash Attention backend on V1 engine.
+Dec 07 18:29:02 jowestdgx bash[137292]: [100B blob data]
+Dec 07 18:29:30 jowestdgx bash[137292]: [108B blob data]
+Dec 07 18:29:40 jowestdgx bash[137292]: [108B blob data]
+Dec 07 18:30:07 jowestdgx bash[137292]: [108B blob data]
+
+=== CONFIG FILES ===
+/etc/nvidia-nim/qwen32b.env:IMAGE_NAME=nvcr.io/nim/qwen/qwen3-32b-dgx-spark:1.1.0-variant
+/etc/nvidia-nim/qwen32b.env:PORT=8001
+/etc/nvidia-nim/qwen32b.env:GPU_MEM_FRACTION=0.60
+/etc/nvidia-nim/qwen32b.env:NGC_API_KEY=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
+/etc/nvidia-nim/qwen32b.env:SHM_SIZE=16g
+/etc/nvidia-nim/nemotron9b.env:IMAGE_NAME=nvcr.io/nim/nvidia/nvidia-nemotron-nano-9b-v2-dgx-spark:1.0.0-variant
+/etc/nvidia-nim/nemotron9b.env:PORT=8003
+/etc/nvidia-nim/nemotron9b.env:GPU_MEM_FRACTION=0.15
+/etc/nvidia-nim/nemotron9b.env:NGC_API_KEY=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
+/etc/nvidia-nim/nemotron9b.env:SHM_SIZE=16g
+/etc/nvidia-nim/nemotron9b.env:NIM_CONFIG_FILE=/etc/nvidia-nim/nemotron9b-config.yaml
+/etc/nvidia-nim/llama8b-config.yaml:context_length: 32768      # you probably don’t need 128k for coding
+/etc/nvidia-nim/llama8b-config.yaml:mem_fraction_static: 0.65  # less KV cache vs default 0.8-ish
+/etc/nvidia-nim/nemotron9b-config.yaml:context_length: 32768      # you probably don’t need 128k for coding
+/etc/nvidia-nim/nemotron9b-config.yaml:mem_fraction_static: 0.65  # less KV cache vs default 0.8-ish
+/etc/nvidia-nim/llama8b.env:IMAGE_NAME=nvcr.io/nim/meta/llama-3.1-8b-instruct-dgx-spark:1.0.0-variant
+/etc/nvidia-nim/llama8b.env:PORT=8002
+/etc/nvidia-nim/llama8b.env:GPU_MEM_FRACTION=0.15
+/etc/nvidia-nim/llama8b.env:NGC_API_KEY=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
+/etc/nvidia-nim/llama8b.env:SHM_SIZE=16g
+/etc/nvidia-nim/llama8b.env:NIM_CONFIG_FILE=/etc/nvidia-nim/llama8b-config.yaml
+

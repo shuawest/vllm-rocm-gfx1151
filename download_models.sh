@@ -143,6 +143,37 @@ setup_model "nvidia-nemotron-8b-ultralong" \
     131072
     # Note: 1M context requires massive RAM. Capped at 128k for safety.
 
+# 13. LLaVA 1.6 Mistral 7B (Vision)
+echo "---------------------------------------------------"
+echo "🚀 Setting up: llava-v1.6-mistral-7b"
+REPO="cjpais/llava-1.6-mistral-7b-gguf"
+FILE="llava-v1.6-mistral-7b.Q4_K_M.gguf"
+PROJ="mmproj-model-f16.gguf"
+
+# Download Model
+if [ ! -f "$MODEL_DIR/$FILE" ]; then
+    echo "⬇️  Downloading Model..."
+    huggingface-cli download $REPO $FILE --local-dir $MODEL_DIR --local-dir-use-symlinks False
+fi
+
+# Download Projector
+if [ ! -f "$MODEL_DIR/$PROJ" ]; then
+    echo "⬇️  Downloading Projector..."
+    huggingface-cli download $REPO $PROJ --local-dir $MODEL_DIR --local-dir-use-symlinks False
+fi
+
+# Create Config
+echo "📝 Generating config: $CONFIG_DIR/llava-v1.6-mistral-7b.env"
+{
+    echo "MODEL_FILE=$FILE"
+    echo "PORT=8001"
+    echo "CTX_SIZE=8192"
+    echo "N_GPU_LAYERS=999"
+    echo "EXTRA_ARGS=\"--mmproj /models/$PROJ\""
+} | sudo tee $CONFIG_DIR/llava-v1.6-mistral-7b.env > /dev/null
+
+echo "✅ Ready! Start with: sudo systemctl start llama-vulkan@llava-v1.6-mistral-7b"
+
 echo "---------------------------------------------------"
 echo "🎉 All models configured!"
 echo "⚠️  NOTE: 80B/72B models require ~48GB VRAM. Run only ONE at a time."
