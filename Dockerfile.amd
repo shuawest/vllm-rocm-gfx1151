@@ -40,4 +40,7 @@ ENV MAX_JOBS="4"
 # --no-build-isolation to use the pre-installed PyTorch
 RUN pip install --no-build-isolation -v .
 
+# Install AutoAWQ for quantization
+RUN pip install autoawq
+
 CMD ["/bin/bash"]
